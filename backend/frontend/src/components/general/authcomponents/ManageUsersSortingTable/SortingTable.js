@@ -334,8 +334,8 @@ const SortingTable = ({ match }) => {
 												);
 											}
 											if (cell.column.id == "role") {
-												if (cell.value == "0") return <td>מנהל מערכת</td>;
-												if (cell.value == "1") return <td>משתמש יחידה</td>;
+												if (cell.value == "0") return <td>הרשאת גוף מטכ"לי</td>;
+												if (cell.value == "1") return <td>הרשאת פיקוד</td>;
 											}
 											if (cell.column.id == "unit") {
 												return (

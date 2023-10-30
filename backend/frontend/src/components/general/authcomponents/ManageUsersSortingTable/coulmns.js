@@ -13,8 +13,8 @@ export const COLUMNS = [
 		Filter: ColumnFilter,
 	},
 	{
-		Header: "יחידה",
-		Footer: "יחידה",
+		Header: "פיקוד",
+		Footer: "פיקוד",
 		accessor: "unit",
 		Filter: ColumnFilter,
 	},

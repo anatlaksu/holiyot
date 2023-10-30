@@ -19,6 +19,7 @@ import {
 import { ThemeContext, themes } from "contexts/ThemeContext";
 
 import mgm from "assets/img/mgm.png";
+import holi from "assets/img/holi.png";
 
 import home from "assets/img/home3.png";
 import home_white from "assets/img/home3_white.png";
@@ -80,7 +81,7 @@ function SidebarAdmin(props) {
 	return (
 		<>
 			<div className="logo">
-				<img src={mgm}></img>
+				<img src={holi}></img>
 			</div>
 			<Nav style={{ textAlign: "right" }}>
 				<li>

@@ -81,7 +81,7 @@ function BazakNavbar(props) {
 											}}
 										>
 											{" "}
-											שלום
+											שלום, {user.name + ' ' + user.lastname}
 										</h3>
 									) : (
 										<h3
@@ -92,7 +92,7 @@ function BazakNavbar(props) {
 											}}
 										>
 											{" "}
-											שלום
+											שלום, {user.name + ' ' + user.lastname}
 										</h3>
 									)}
 								</Col>

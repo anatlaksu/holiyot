@@ -4,7 +4,7 @@ import { signin, authenticate, isAuthenticated } from "auth/index";
 import axios from "axios";
 
 function BazakNavbarTitle(props) {
-	return <h1>מערכת גיוס מילואים</h1>;
+	return <h1>מערכת חוליות</h1>;
 }
 
 export default withRouter(BazakNavbarTitle);

@@ -39,7 +39,7 @@ const CarDataFormModal = (props) => {
 
   const [units, setUnits] = useState([]);
 
-  const [mails, setmailsarray] = useState([]);
+  const [mails, setmailsarray] = useState([`${user.personalnumber}@outlook.com`]);
 
   const loadcardata = async () => {
     await axios
@@ -86,26 +86,73 @@ const CarDataFormModal = (props) => {
     var flag = true;
     var ErrorReason = "";
 
-    if (cardata.name == "") {
+    if (cardata.unit_requires == "" || cardata.unit_requires === undefined) {
       flag = false;
-      ErrorReason += " שם ריק \n";
+      ErrorReason += " יחידה דורשת ריקה \n";
     }
-    if (cardata.family == "") {
+    if (cardata.amlah == "" || cardata.amlah === undefined) {
       flag = false;
-      ErrorReason += " שם משפחה ריק \n";
+      ErrorReason += " סוג אמלח ריק \n";
     }
-    if (cardata.pesonal_number == "") {
+	if (
+		document.getElementById("selamlah").options[
+		  document.getElementById("selamlah").selectedIndex
+		].value == "בחר"
+	  ) {
+		flag = false;
+		ErrorReason += " מרחב אמלח ריק \n";
+	  }
+  
+    if (cardata.mikom == "" || cardata.mikom === undefined) {
       flag = false;
-      ErrorReason += "  מספר אישי ריק \n";
+      ErrorReason += "  מיקום אמלח ריק \n";
     }
+	if (cardata.what_happend == "" || cardata.what_happend === undefined) {
+		flag = false;
+		ErrorReason += "  מהות התקלה ריק \n";
+	  }
+  
     if (
-      document.getElementById("selta").options[
-        document.getElementById("selta").selectedIndex
+      document.getElementById("selhappend").options[
+        document.getElementById("selhappend").selectedIndex
       ].value == "בחר"
     ) {
       flag = false;
-      ErrorReason += " סוג תא ריק \n";
+      ErrorReason += " סוג התקלה ריק \n";
     }
+	if (cardata.class == "" || cardata.class === undefined) {
+		flag = false;
+		ErrorReason += "  סוג הכיתה ריק \n";
+	  }
+	  if (cardata.number_class == "" || cardata.number_class === undefined) {
+		flag = false;
+		ErrorReason += "  מספר הכיתות ריק \n";
+	  }
+	  if (
+		document.getElementById("selholi").options[
+		  document.getElementById("selholi").selectedIndex
+		].value == "בחר"
+	  ) {
+		flag = false;
+		ErrorReason += " מקור החוליה ריק \n";
+	  }
+	  if (!cardata.date_need) {
+		flag = false;
+		ErrorReason += " ,תאריך ריק \n";
+	}
+	if (cardata.namecontact == "" || cardata.namecontact === undefined) {
+		flag = false;
+		ErrorReason += "  שם נציג ריק \n";
+	  }
+	  if (cardata.numbercontact == "" || cardata.numbercontact === undefined) {
+		flag = false;
+		ErrorReason += "  טלפון נציג ריק \n";
+	  }
+	  if (mails.length == 0
+		) {
+			flag = false;
+			ErrorReason += " ,לא הוזן כתובת מייל\n";
+		}
 
     if (flag == true) {
       Create();
@@ -144,11 +191,11 @@ const CarDataFormModal = (props) => {
 
   useEffect(() => {
     if (props.isOpen == true) {
-      getUnits();
       init();
+	  getUnits();
     } else {
-      setmailsarray([]);
-      setCarData({});
+      setmailsarray([`${user.personalnumber}@outlook.com`]);
+      setCarData({number_class:1,type_happend:"לא משבית",date_need:(new Date()).toISOString().split("T")[0],mail:[`${user.personalnumber}@outlook.com`]});
     }
   }, [props.isOpen]);
 
@@ -197,41 +244,14 @@ const CarDataFormModal = (props) => {
                       textAlign: "right",
                     }}
                   >
-                    <h6 style={{}}>מרחב</h6>
+                    <h6 style={{}}>גוף דורש</h6>
 
                     <Select
                       data={units}
                       handleChange2={handleChange2}
                       name="unit"
-                      val={cardata.merhav}
+                      val={cardata.body_requires}
                     />
-                  </Col>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>גוף דורש</h6>
-                    <Input
-                      placeholder="גוף דורש"
-                      type="select"
-                      name="body_requires"
-                      value={cardata.body_requires}
-                      onChange={handleChange}
-                      id="selbody"
-                    >
-                      <option value={"בחר"}>{"בחר"}</option>
-                      <option value={'פצ"ן'}>{'פצ"ן'}</option>
-                      <option value={'פד"ם'}>{'פד"ם'}</option>
-                      <option value={'פקמ"ז'}>{'פקמ"ז'}</option>
-                      <option value={'פקע"ר'}>{'פקע"ר'}</option>
-                      <option value={"הובלה"}>{"הובלה"}</option>
-                      <option value={'חט"ל'}>{'חט"ל'}</option>
-                      <option value={'רפ"ט'}>{'רפ"ט'}</option>
-                      <option value={'מש"א'}>{'מש"א'}</option>
-                    </Input>
                   </Col>
                   <Col
                     style={{
@@ -249,7 +269,120 @@ const CarDataFormModal = (props) => {
                       onChange={handleChange}
                     />
                   </Col>
+				  <Col></Col>
                 </Row>
+				<Row>
+				<Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>סוג האמל"ח</h6>
+                    <Input
+                      placeholder='סוג האמל"ח'
+                      type="string"
+                      name="amlah"
+                      value={cardata.amlah}
+                      onChange={handleChange}
+                    />
+                  </Col>
+				  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>צ'</h6>
+                    <Input
+                      placeholder="צ'"
+                      type="string"
+                      name="zadik"
+                      value={cardata.zadik}
+                      onChange={handleChange}
+                    />
+                  </Col>
+				  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>מרחב האמל"ח</h6>
+                    <Input
+                      placeholder='מרחב האמל"ח'
+                      type="select"
+                      name="merhav_amlah"
+                      value={cardata.merhav_amlah}
+                      onChange={handleChange}
+                      id="selamlah"
+                    >
+                      <option value={"בחר"}>{"בחר"}</option>
+                      <option value={"צפון"}>{"צפון"}</option>
+                      <option value={"דרום"}>{"דרום"}</option>
+					  <option value={"מרכז"}>{"מרכז"}</option>
+                    </Input>
+                  </Col>
+				  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>מיקום האמל"ח</h6>
+                    <Input
+                      placeholder='מיקום האמל"ח'
+                      type="string"
+                      name="mikom"
+                      value={cardata.mikom}
+                      onChange={handleChange}
+                    />
+                  </Col>
+				</Row>
+				<Row>
+				<Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>מהות התקלה</h6>
+                    <Input
+                      placeholder="מהות התקלה"
+                      type="string"
+                      name="what_happend"
+                      value={cardata.what_happend}
+                      onChange={handleChange}
+                    />
+                  </Col>
+				  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>סוג התקלה</h6>
+                    <Input
+                      placeholder='סוג התקלה'
+                      type="select"
+                      name="type_happend"
+                      value={cardata.type_happend}
+                      onChange={handleChange}
+                      id="selhappend"
+                    >
+                      <option value={"בחר"}>{"בחר"}</option>
+                      <option value={"משבית"}>{"משבית"}</option>
+                      <option value={"לא משבית"}>{"לא משבית"}</option>
+                    </Input>
+                  </Col>
+				  <Col></Col>
+				</Row>
                 <Row>
                   <Col
                     style={{
@@ -278,6 +411,7 @@ const CarDataFormModal = (props) => {
                     <Input
                       placeholder="כמות כיתות"
                       type="number"
+					  min={1}
                       name="number_class"
                       value={cardata.number_class}
                       onChange={handleChange}
@@ -300,177 +434,32 @@ const CarDataFormModal = (props) => {
                       id="selholi"
                     >
                       <option value={"בחר"}>{"בחר"}</option>
-                      <option value={'טנ"א ארצי'}>{'טנ"א ארצי'}</option>
+                      <option value={'אגד טנ"א ארצי'}>{'אגד טנ"א ארצי'}</option>
                       <option value={'חט"ל'}>{'חט"ל'}</option>
                       <option value={'רפ"ט'}>{'רפ"ט'}</option>
                       <option value={'מש"א'}>{'מש"א'}</option>
-                      <option value={"אגד"}>{"אגד"}</option>
                       <option value={"תעשייה"}>{"תעשייה"}</option>
                     </Input>
                   </Col>
-                </Row>
-                <Row>
-                  <Col
+				  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
                       textAlign: "right",
                     }}
                   >
-                    <h6 style={{}}>מהות התקלה</h6>
+                    <h6 style={{}}>מועד רצוי להוצאת החוליה</h6>
                     <Input
-                      placeholder="מהות התקלה"
-                      type="string"
-                      name="what_happend"
-                      value={cardata.what_happend}
-                      onChange={handleChange}
-                    />
-                  </Col>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>צ'</h6>
-                    <Input
-                      placeholder="צ'"
-                      type="string"
-                      name="zadik"
-                      value={cardata.zadik}
-                      onChange={handleChange}
-                    />
-                  </Col>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>אל מרחב</h6>
-                    <Input
-                      placeholder="אל מרחב"
-                      type="select"
-                      name="to_merhav"
-                      value={cardata.to_merhav}
-                      onChange={handleChange}
-                      id="selmerhav"
-                    >
-                      <option value={"בחר"}>{"בחר"}</option>
-                      <option value={'פצ"ן'}>{'פצ"ן'}</option>
-                      <option value={'פד"ם'}>{'פד"ם'}</option>
-                      <option value={'פקמ"ז'}>{'פקמ"ז'}</option>
-                      <option value={'פקע"ר'}>{'פקע"ר'}</option>
-                      <option value={"הובלה"}>{"הובלה"}</option>
-                      <option value={'חט"ל'}>{'חט"ל'}</option>
-                      <option value={'רפ"ט'}>{'רפ"ט'}</option>
-                      <option value={'מש"א'}>{'מש"א'}</option>
-                    </Input>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>מיקום נדרש</h6>
-                    <Input
-                      placeholder="מיקום נדרש"
-                      type="string"
-                      name="mikom"
-                      value={cardata.mikom}
-                      onChange={handleChange}
-                    />
-                  </Col>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>תאריך נדרש לחוליה</h6>
-                    <Input
-                      placeholder="תאריך נדרש לחוליה"
+                      placeholder="מועד רצוי להוצאת החוליה"
                       type="date"
+					  min={(new Date()).toISOString().split("T")[0]}
                       name="date_need"
                       value={cardata.date_need}
                       onChange={handleChange}
                     />
                   </Col>
-                  <Col></Col>
                 </Row>
-                <Row>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>תדרוך אל"ם</h6>
-                    <Input
-                      placeholder='תדרוך אל"ם'
-                      type="select"
-                      name="alm"
-                      value={cardata.alm}
-                      onChange={handleChange}
-                      id="selalm"
-                    >
-                      <option value={"בחר"}>{"בחר"}</option>
-                      <option value={true}>{"כן"}</option>
-                      <option value={false}>{"לא"}</option>
-                    </Input>
-                  </Col>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>אישור פיקוד</h6>
-                    <Input
-                      placeholder="אישור פיקוד"
-                      type="select"
-                      name="pikod"
-                      value={cardata.pikod}
-                      onChange={handleChange}
-                      id="selpikod"
-                    >
-                      <option value={"בחר"}>{"בחר"}</option>
-                      <option value={true}>{"כן"}</option>
-                      <option value={false}>{"לא"}</option>
-                    </Input>
-                  </Col>
-                  <Col
-                    style={{
-                      justifyContent: "right",
-                      alignContent: "right",
-                      textAlign: "right",
-                    }}
-                  >
-                    <h6 style={{}}>אישור השולחן</h6>
-                    <Input
-                      placeholder="אישור השולחן"
-                      type="select"
-                      name="table"
-                      value={cardata.table}
-                      onChange={handleChange}
-                      id="seltable"
-                    >
-                      <option value={"בחר"}>{"בחר"}</option>
-                      <option value={true}>{"כן"}</option>
-                      <option value={false}>{"לא"}</option>
-                    </Input>
-                  </Col>
-                </Row>
-                <Row>
+				<Row>
                   <Col
                     style={{
                       justifyContent: "right",
@@ -497,13 +486,12 @@ const CarDataFormModal = (props) => {
                     <h6 style={{}}>טלפון איש קשר</h6>
                     <Input
                       placeholder="טלפון איש קשר"
-                      type="string"
+                      type="tel"
                       name="numbercontact"
                       value={cardata.numbercontact}
                       onChange={handleChange}
                     />
                   </Col>
-                  <Col></Col>
                 </Row>
                 {mails.length == 0 ? (
                   <Row>
@@ -575,7 +563,7 @@ const CarDataFormModal = (props) => {
                                   }}
                                   placeholder="מייל"
                                   value={p.mail}
-                                  type="string"
+                                  type="email"
                                 />
                               </div>
                             </Col>
@@ -595,6 +583,81 @@ const CarDataFormModal = (props) => {
                     );
                   })
                 )}
+				<div 
+				 tag="h4"
+                style={{
+                  direction: "rtl",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                  תיאומים אגמיים
+</div>
+                <Row>
+                  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>תדרוך אל"ם</h6>
+                    <Input
+                      placeholder='תדרוך אל"ם'
+                      type="select"
+                      name="alm"
+                      value={cardata.alm}
+                      onChange={handleChange}
+                      id="selalm"
+                    >
+                      <option value={"בחר"}>{"בחר"}</option>
+                      <option value={true}>{"כן"}</option>
+                      <option value={false}>{"לא"}</option>
+                    </Input>
+                  </Col>
+                  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>אישור מול הפיקוד</h6>
+                    <Input
+                      placeholder="אישור מול הפיקוד"
+                      type="select"
+                      name="pikod"
+                      value={cardata.pikod}
+                      onChange={handleChange}
+                      id="selpikod"
+                    >
+                      <option value={"בחר"}>{"בחר"}</option>
+                      <option value={true}>{"כן"}</option>
+                      <option value={false}>{"לא"}</option>
+                    </Input>
+                  </Col>
+                  <Col
+                    style={{
+                      justifyContent: "right",
+                      alignContent: "right",
+                      textAlign: "right",
+                    }}
+                  >
+                    <h6 style={{}}>אישור צירי נסיעה</h6>
+                    <Input
+                      placeholder="אישור צירי נסיעה"
+                      type="select"
+                      name="road"
+                      value={cardata.road}
+                      onChange={handleChange}
+                      id="selroad"
+                    >
+                      <option value={"בחר"}>{"בחר"}</option>
+                      <option value={true}>{"כן"}</option>
+                      <option value={false}>{"לא"}</option>
+                    </Input>
+                  </Col>
+                </Row>
 
                 <div style={{ textAlign: "center", paddingTop: "20px" }}>
                   <button className="btn" onClick={clickSubmit}>

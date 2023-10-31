@@ -39,7 +39,9 @@ const CarDataFormModal = (props) => {
 
   const [units, setUnits] = useState([]);
 
-  const [mails, setmailsarray] = useState([`${user.personalnumber}@outlook.com`]);
+  const [mails, setmailsarray] = useState([
+    { mail: `${user.personalnumber}@outlook.com` },
+  ]);
 
   const loadcardata = async () => {
     await axios
@@ -84,80 +86,91 @@ const CarDataFormModal = (props) => {
   const CheckFormData = () => {
     //check for stuff isnt empty
     var flag = true;
-    var ErrorReason = "";
+    var ErrorReason = [];
 
     if (cardata.unit_requires == "" || cardata.unit_requires === undefined) {
       flag = false;
-      ErrorReason += " יחידה דורשת ריקה \n";
+      ErrorReason.push(" יחידה דורשת ריקה");
     }
     if (cardata.amlah == "" || cardata.amlah === undefined) {
       flag = false;
-      ErrorReason += " סוג אמלח ריק \n";
+      ErrorReason.push(" סוג אמלח ריק ");
     }
-	if (
-		document.getElementById("selamlah").options[
-		  document.getElementById("selamlah").selectedIndex
-		].value == "בחר"
-	  ) {
-		flag = false;
-		ErrorReason += " מרחב אמלח ריק \n";
-	  }
-  
+    if (
+      document.getElementById("selamlah").options[
+        document.getElementById("selamlah").selectedIndex
+      ].value == "בחר"
+    ) {
+      flag = false;
+      ErrorReason.push(" מרחב אמלח ריק ");
+    }
+
     if (cardata.mikom == "" || cardata.mikom === undefined) {
       flag = false;
-      ErrorReason += "  מיקום אמלח ריק \n";
+      ErrorReason.push("  מיקום אמלח ריק ");
     }
-	if (cardata.what_happend == "" || cardata.what_happend === undefined) {
-		flag = false;
-		ErrorReason += "  מהות התקלה ריק \n";
-	  }
-  
+    if (cardata.what_happend == "" || cardata.what_happend === undefined) {
+      flag = false;
+      ErrorReason.push("  מהות התקלה ריק ");
+    }
+
     if (
       document.getElementById("selhappend").options[
         document.getElementById("selhappend").selectedIndex
       ].value == "בחר"
     ) {
       flag = false;
-      ErrorReason += " סוג התקלה ריק \n";
+      ErrorReason.push(" סוג התקלה ריק ");
     }
-	if (cardata.class == "" || cardata.class === undefined) {
-		flag = false;
-		ErrorReason += "  סוג הכיתה ריק \n";
-	  }
-	  if (cardata.number_class == "" || cardata.number_class === undefined) {
-		flag = false;
-		ErrorReason += "  מספר הכיתות ריק \n";
-	  }
-	  if (
-		document.getElementById("selholi").options[
-		  document.getElementById("selholi").selectedIndex
-		].value == "בחר"
-	  ) {
-		flag = false;
-		ErrorReason += " מקור החוליה ריק \n";
-	  }
-	  if (!cardata.date_need) {
-		flag = false;
-		ErrorReason += " ,תאריך ריק \n";
-	}
-	if (cardata.namecontact == "" || cardata.namecontact === undefined) {
-		flag = false;
-		ErrorReason += "  שם נציג ריק \n";
-	  }
-	  if (cardata.numbercontact == "" || cardata.numbercontact === undefined) {
-		flag = false;
-		ErrorReason += "  טלפון נציג ריק \n";
-	  }
-	  if (mails.length == 0
-		) {
-			flag = false;
-			ErrorReason += " ,לא הוזן כתובת מייל\n";
-		}
+    if (cardata.class == "" || cardata.class === undefined) {
+      flag = false;
+      ErrorReason.push("  סוג הכיתה ריק ");
+    }
+    if (cardata.number_class == "" || cardata.number_class === undefined) {
+      flag = false;
+      ErrorReason.push("  מספר הכיתות ריק ");
+    }
+    if (
+      document.getElementById("selholi").options[
+        document.getElementById("selholi").selectedIndex
+      ].value == "בחר"
+    ) {
+      flag = false;
+      ErrorReason.push(" מקור החוליה ריק ");
+    }
+    if (!cardata.date_need) {
+      flag = false;
+      ErrorReason.push(" תאריך ריק ");
+    }
+    if (cardata.namecontact == "" || cardata.namecontact === undefined) {
+      flag = false;
+      ErrorReason.push("  שם נציג ריק ");
+    }
+    if (cardata.numbercontact == "" || cardata.numbercontact === undefined) {
+      flag = false;
+      ErrorReason.push("  טלפון נציג ריק ");
+    }
+    if (mails.length == 0) {
+      flag = false;
+      ErrorReason.push(" לא הוזן כתובת מייל");
+    }
+
+    // if (user.role == "2" && cardata.status == "חדש") {
+    //   if (
+    //     document.getElementById("selkshirot_tne").options[
+    //       document.getElementById("selkshirot_tne").selectedIndex
+    //     ].value == "בחר"
+    //   ) {
+    //     flag = false;
+    //     ErrorReason.push(' אישור תחום כשירות מסגרות הטנ"א ריק ');
+    //   }
 
     if (flag == true) {
       Create();
     } else {
-      toast.error(ErrorReason);
+      ErrorReason.forEach((e) => {
+        toast.error(e);
+      });
     }
   };
 
@@ -192,10 +205,24 @@ const CarDataFormModal = (props) => {
   useEffect(() => {
     if (props.isOpen == true) {
       init();
-	  getUnits();
+      getUnits();
     } else {
-      setmailsarray([`${user.personalnumber}@outlook.com`]);
-      setCarData({number_class:1,type_happend:"לא משבית",date_need:(new Date()).toISOString().split("T")[0],mail:[`${user.personalnumber}@outlook.com`]});
+      let date_kshirot_tne = "";
+      let date_matcal_tne = "";
+      if (user.role == "2" && cardata.status == "חדש") {
+        date_kshirot_tne = new Date().toISOString();
+      }
+      if (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א') {
+        date_matcal_tne = new Date().toISOString();
+      }
+      setmailsarray([{ mail: `${user.personalnumber}@outlook.com` }]);
+      setCarData({
+        number_class: 1,
+        type_happend: "לא משבית",
+        date_need: new Date().toISOString().split("T")[0],
+        date_kshirot_tne: date_kshirot_tne,
+        date_matcal_tne: date_matcal_tne,
+      });
     }
   }, [props.isOpen]);
 
@@ -269,10 +296,10 @@ const CarDataFormModal = (props) => {
                       onChange={handleChange}
                     />
                   </Col>
-				  <Col></Col>
+                  <Col></Col>
                 </Row>
-				<Row>
-				<Col
+                <Row>
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -288,7 +315,7 @@ const CarDataFormModal = (props) => {
                       onChange={handleChange}
                     />
                   </Col>
-				  <Col
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -304,7 +331,7 @@ const CarDataFormModal = (props) => {
                       onChange={handleChange}
                     />
                   </Col>
-				  <Col
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -323,10 +350,10 @@ const CarDataFormModal = (props) => {
                       <option value={"בחר"}>{"בחר"}</option>
                       <option value={"צפון"}>{"צפון"}</option>
                       <option value={"דרום"}>{"דרום"}</option>
-					  <option value={"מרכז"}>{"מרכז"}</option>
+                      <option value={"מרכז"}>{"מרכז"}</option>
                     </Input>
                   </Col>
-				  <Col
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -342,9 +369,9 @@ const CarDataFormModal = (props) => {
                       onChange={handleChange}
                     />
                   </Col>
-				</Row>
-				<Row>
-				<Col
+                </Row>
+                <Row>
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -360,7 +387,7 @@ const CarDataFormModal = (props) => {
                       onChange={handleChange}
                     />
                   </Col>
-				  <Col
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -369,7 +396,7 @@ const CarDataFormModal = (props) => {
                   >
                     <h6 style={{}}>סוג התקלה</h6>
                     <Input
-                      placeholder='סוג התקלה'
+                      placeholder="סוג התקלה"
                       type="select"
                       name="type_happend"
                       value={cardata.type_happend}
@@ -381,8 +408,8 @@ const CarDataFormModal = (props) => {
                       <option value={"לא משבית"}>{"לא משבית"}</option>
                     </Input>
                   </Col>
-				  <Col></Col>
-				</Row>
+                  <Col></Col>
+                </Row>
                 <Row>
                   <Col
                     style={{
@@ -411,7 +438,7 @@ const CarDataFormModal = (props) => {
                     <Input
                       placeholder="כמות כיתות"
                       type="number"
-					  min={1}
+                      min={1}
                       name="number_class"
                       value={cardata.number_class}
                       onChange={handleChange}
@@ -441,7 +468,7 @@ const CarDataFormModal = (props) => {
                       <option value={"תעשייה"}>{"תעשייה"}</option>
                     </Input>
                   </Col>
-				  <Col
+                  <Col
                     style={{
                       justifyContent: "right",
                       alignContent: "right",
@@ -452,14 +479,14 @@ const CarDataFormModal = (props) => {
                     <Input
                       placeholder="מועד רצוי להוצאת החוליה"
                       type="date"
-					  min={(new Date()).toISOString().split("T")[0]}
+                      min={new Date().toISOString().split("T")[0]}
                       name="date_need"
                       value={cardata.date_need}
                       onChange={handleChange}
                     />
                   </Col>
                 </Row>
-				<Row>
+                <Row>
                   <Col
                     style={{
                       justifyContent: "right",
@@ -467,7 +494,7 @@ const CarDataFormModal = (props) => {
                       textAlign: "right",
                     }}
                   >
-                    <h6 style={{}}>שם איש קשר</h6>
+                    <h6 style={{}}>שם נציג היחידה לתיאום</h6>
                     <Input
                       placeholder="שם איש קשר"
                       type="string"
@@ -483,7 +510,7 @@ const CarDataFormModal = (props) => {
                       textAlign: "right",
                     }}
                   >
-                    <h6 style={{}}>טלפון איש קשר</h6>
+                    <h6 style={{}}>טלפון נציג היחידה לתיאום</h6>
                     <Input
                       placeholder="טלפון איש קשר"
                       type="tel"
@@ -583,16 +610,16 @@ const CarDataFormModal = (props) => {
                     );
                   })
                 )}
-				<div 
-				 tag="h4"
-                style={{
-                  direction: "rtl",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
+                <div
+                  tag="h4"
+                  style={{
+                    direction: "rtl",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
                   תיאומים אגמיים
-</div>
+                </div>
                 <Row>
                   <Col
                     style={{
@@ -659,6 +686,89 @@ const CarDataFormModal = (props) => {
                   </Col>
                 </Row>
 
+                {user.role == "2" && cardata.status == "חדש" && (
+                  <Row>
+                    <Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>אישור תחום כשירות מסגרות הטנ"א</h6>
+                      <Input
+                        placeholder='אישור תחום כשירות מסגרות הטנ"א'
+                        type="select"
+                        name="kshirot_tne"
+                        value={cardata.kshirot_tne}
+                        onChange={handleChange}
+                        id="selkshirot_tne"
+                      >
+                        <option value={"בחר"}>{"בחר"}</option>
+                        <option value={true}>{"אושר"}</option>
+                        <option value={false}>{"נדחה"}</option>
+                      </Input>
+                    </Col>
+                    <Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>הערות תחום כשירות מסגרות הטנ"א</h6>
+                      <Input
+                        placeholder='הערות תחום כשירות מסגרות הטנ"א'
+                        type="textare"
+                        name="pirot_kshirot_tne"
+                        value={cardata.pirot_kshirot_tne}
+                        onChange={handleChange}
+                      />
+                    </Col>
+                  </Row>
+                )}
+                {user.role == "0" &&
+                  cardata.status == 'ממתין לאישור מכלול טנ"א' && (
+                    <Row>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>אישור מכלול טנ"א מטכ"לי</h6>
+                        <Input
+                          placeholder='אישור מכלול טנ"א מטכ"לי'
+                          type="select"
+                          name="kshirot_tne"
+                          value={cardata.matcal_tne}
+                          onChange={handleChange}
+                          id="selmatcal_tne"
+                        >
+                          <option value={"בחר"}>{"בחר"}</option>
+                          <option value={true}>{"אושר"}</option>
+                          <option value={false}>{"נדחה"}</option>
+                        </Input>
+                      </Col>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>הערות מכלול טנ"א מטכ"לי</h6>
+                        <Input
+                          placeholder='הערות מכלול טנ"א מטכ"לי'
+                          type="textare"
+                          name="pirot_matcal_tne"
+                          value={cardata.pirot_matcal_tne}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                    </Row>
+                  )}
                 <div style={{ textAlign: "center", paddingTop: "20px" }}>
                   <button className="btn" onClick={clickSubmit}>
                     שלח

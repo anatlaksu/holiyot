@@ -18,11 +18,13 @@ import {
 import axios from 'axios';
 import { signin, authenticate, isAuthenticated } from 'auth/index';
 
+import HoliyotReportTable from 'components/bazak/Filters/holiyotReportTable/SortingTable.js';
+
 function Holireport({ match }) {
 
   return (
     <>
-      <h1>כאן יהיה טבלה עם כל היסטוריית בקשות + מעקב אחרי סטטוס +צפייה על הדיווח</h1>     {/*spinner in table*/}
+      <HoliyotReportTable />     {/*spinner in table*/}
     </>
   );
 }

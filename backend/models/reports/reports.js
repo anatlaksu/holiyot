@@ -21,7 +21,7 @@ const reportSchema = new mongoose.Schema({
     pikod:{ type: String},
     table:{ type: String},
     date_approv:{ type: String},
-    status:{type: String},
+    status:{type: Number},
     kshirot_tne:{type: String},
     matcal_tne:{type: String},
     pirot:{type: String},

@@ -4,22 +4,22 @@ const { v4: uuidv4 } = require("uuid");
 const { ObjectId } = mongoose.Schema;
 
 const userSchema = new mongoose.Schema(
-	{
-		// hashed_password: {type: String,required: true},
-		// salt: String,
-		name:{type: String},
-		lastname:{type: String},
-		personalnumber: { type: String, trim: true, unique: true, require: true },
-		role: { type: String, default: "1" },
-		validated: { type: Boolean, default: true },
-		unit: { type: String },
-		//
-		//
-		site_permission: { type: String, default: "צפייה ועריכה" },
-		//
-		// mainscreenid: {type:String},
-	},
-	{ timestamps: true }
+  {
+    // hashed_password: {type: String,required: true},
+    // salt: String,
+    name: { type: String },
+    lastname: { type: String },
+    personalnumber: { type: String, trim: true, unique: true, require: true },
+    role: { type: String, default: "1" },
+    validated: { type: Boolean, default: false },
+    unit: { type: String },
+    //
+    //
+    site_permission: { type: String, default: "צפייה ועריכה" },
+    //
+    // mainscreenid: {type:String},
+  },
+  { timestamps: true }
 );
 
 // virtual field

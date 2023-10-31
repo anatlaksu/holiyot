@@ -4,6 +4,7 @@ import { Redirect, withRouter } from "react-router-dom";
 // reactstrap components
 import axios from "axios";
 import Select from "components/general/Select/AnimatedSelect";
+import unitRequiredList from "data/ConstCollectons/unitRequiredList";
 import history from "history.js";
 import { produce } from "immer";
 import { toast } from "react-toastify";
@@ -144,11 +145,12 @@ const EditUserForm = ({ match }) => {
       lastname: data.lastname,
       role: data.role,
       validated: data.validated,
-      personalnumber: data.personalnumber,
-      gdodid: data.gdodid,
-      hativaid: data.hativaid,
-      ogdaid: data.ogdaid,
-      pikodid: data.pikodid,
+      unit: data.unit,
+      //   personalnumber: data.personalnumber,
+      //   gdodid: data.gdodid,
+      //   hativaid: data.hativaid,
+      //   ogdaid: data.ogdaid,
+      //   pikodid: data.pikodid,
 
       site_permission: data.site_permission,
     };
@@ -216,6 +218,7 @@ const EditUserForm = ({ match }) => {
                       <option value="">הרשאה</option>
                       <option value="0">הרשאת גוף מטכ"לי</option>
                       <option value="2">הרשאות תחום מסגרות טנ"א</option>
+                      <option value="3">הרשאת גוף משלח</option>
                       <option value="1">הרשאת פיקוד</option>
                     </Input>
                   </FormGroup>
@@ -239,6 +242,32 @@ const EditUserForm = ({ match }) => {
                           name={"unit"}
                           val={data.unit ? data.unit : undefined}
                         />
+                      </FormGroup>
+                    </>
+                  ) : data.role === "3" ? (
+                    <>
+                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        גוף משלח
+                      </div>
+                      <FormGroup
+                        dir="rtl"
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <Input
+                          type="select"
+                          name="unit"
+                          value={data.unit}
+                          onChange={handleChange}
+                        >
+                          <option value="">הרשאה</option>
+                          {unitRequiredList.map((u) => (
+                            <option value={u.id}>{u.name}</option>
+                          ))}
+                        </Input>
                       </FormGroup>
                     </>
                   ) : null}

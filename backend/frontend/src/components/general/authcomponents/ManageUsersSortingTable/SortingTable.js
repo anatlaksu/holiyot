@@ -337,6 +337,7 @@ const SortingTable = ({ match }) => {
                         if (cell.value == "1") return <td>הרשאת פיקוד</td>;
                         if (cell.value == "2")
                           return <td>הרשאות תחום מסגרות טנ"א</td>;
+                        if (cell.value == "3") return <td>הרשאת גוף משלח</td>;
                       }
                       if (cell.column.id == "unit") {
                         return (

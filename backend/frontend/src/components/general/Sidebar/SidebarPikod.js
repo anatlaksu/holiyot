@@ -68,6 +68,8 @@ import {
 } from "reactstrap";
 
 import { isAuthenticated } from "auth/index";
+import holi from "assets/img/holi.png";
+
 
 function SidebarPikod(props) {
 	const { user } = isAuthenticated();
@@ -82,12 +84,12 @@ function SidebarPikod(props) {
 	return (
 		<>
 			<div className="logo">
-				<img src={mgm}></img>
+				<img src={holi}></img>
 			</div>
 			<Nav style={{ textAlign: "right" }}>
 				<li>
 					<NavLink
-						to={`/dashboard/pikod/${user.pikodid}/magadal/0/false`}
+						to={`/dashboard/`}
 						style={{ margin: "0px" }}
 						activeClassName="sidebar_active_link"
 					>
@@ -123,7 +125,7 @@ function SidebarPikod(props) {
 				</li>
 				<li>
 					<NavLink
-						to={`/statisticspage/pikod/${user.pikodid}/magadal/0`}
+						to={`/holireport`}
 						style={{ margin: "0px" }}
 						activeClassName="sidebar_active_link"
 					>
@@ -138,9 +140,9 @@ function SidebarPikod(props) {
 								}}
 							>
 								{props.theme == "white" ? (
-									<img src={graphpic} style={{ height: "20px" }}></img>
+									<img src={table} style={{ height: "20px" }}></img>
 								) : (
-									<img src={graphpic_white} style={{ height: "20px" }}></img>
+									<img src={table_white} style={{ height: "20px" }}></img>
 								)}
 							</Col>
 							<Col xs={12} md={9} style={{ paddingRight: "0px" }}>
@@ -151,84 +153,13 @@ function SidebarPikod(props) {
 										paddingBottom: "6px",
 									}}
 								>
-									סטטיסטיקות
+									 טבלת בקשות לחוליה
 								</h4>
 							</Col>
 						</Row>
 					</NavLink>
 				</li>
-				<li>
-					<NavLink
-						to={`/unittreepage/pikod/${user.pikodid}`}
-						style={{ margin: "0px" }}
-						activeClassName="sidebar_active_link"
-					>
-						<Row style={{ direction: "rtl" }}>
-							<Col
-								xs={12}
-								md={3}
-								style={{
-									paddingLeft: "0px",
-									textAlign: "center",
-									alignSelf: "center",
-								}}
-							>
-								{props.theme == "white" ? (
-									<img src={shortlist} style={{ height: "20px" }}></img>
-								) : (
-									<img src={shortlist_white} style={{ height: "20px" }}></img>
-								)}
-							</Col>
-							<Col xs={12} md={9} style={{ paddingRight: "0px" }}>
-								<h4
-									style={{
-										margin: "0px",
-										paddingTop: "6px",
-										paddingBottom: "6px",
-									}}
-								>
-									עץ יחידות
-								</h4>
-							</Col>
-						</Row>
-					</NavLink>
-				</li>
-				<li>
-					<NavLink
-						to="/about"
-						style={{ margin: "0px" }}
-						activeClassName="sidebar_active_link"
-					>
-						<Row style={{ direction: "rtl" }}>
-							<Col
-								xs={12}
-								md={3}
-								style={{
-									paddingLeft: "0px",
-									textAlign: "center",
-									alignSelf: "center",
-								}}
-							>
-								{props.theme == "white" ? (
-									<img src={info} style={{ height: "20px" }}></img>
-								) : (
-									<img src={info_white} style={{ height: "20px" }}></img>
-								)}
-							</Col>
-							<Col xs={12} md={9} style={{ paddingRight: "0px" }}>
-								<h4
-									style={{
-										margin: "0px",
-										paddingTop: "6px",
-										paddingBottom: "6px",
-									}}
-								>
-									אודות המערכת
-								</h4>
-							</Col>
-						</Row>
-					</NavLink>
-				</li>
+
 			</Nav>
 		</>
 	);

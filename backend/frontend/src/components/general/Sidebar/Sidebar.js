@@ -38,11 +38,8 @@ import Logo100 from 'assets/img/team100.png';
 import Logo100_white from 'assets/img/team100_white.png';
 
 import SidebarAdmin from 'components/general/Sidebar/SidebarAdmin';
-import SidebarGdod from 'components/general/Sidebar/SidebarGdod';
-import SidebarHativa from 'components/general/Sidebar/SidebarHativa';
-import SidebarOgda from 'components/general/Sidebar/SidebarOgda';
 import SidebarPikod from 'components/general/Sidebar/SidebarPikod';
-import SidebarGeneral from 'components/general/Sidebar/SidebarGeneral';
+import SidebarTene from 'components/general/Sidebar/sidebarTene';
 import { signout } from "auth/index";
 
 function Sidebar() {
@@ -73,17 +70,12 @@ function Sidebar() {
 
       <div className="sidebar" style={{ background: color, marginTop: '60px', boxShadow: 'none', borderRadius: '0px', borderLeft: '1px solid lightgray' }}>
         <div className="sidebar-wrapper" style={{ overflow: 'hidden' }}>
-          {user.role === "0" ? <SidebarAdmin theme={color}/> :
+          {
+          user.role === "0" ? <SidebarAdmin theme={color}/> :
 
-            user.role === "1" ? <SidebarGdod theme={color}/> :
+            user.role === "1" ? <SidebarPikod theme={color}/> : 
 
-              user.role === "2" ? <SidebarHativa theme={color}/> :
-
-                user.role === "3" ? <SidebarOgda theme={color}/> :
-
-                  user.role === "4" ? <SidebarPikod theme={color}/> :
-
-                   user.role === "5" ? <SidebarGeneral theme={color}/> : null
+            user.role === "2" ? <SidebarTene theme={color}/> : null
           }
           <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
             {color == 'white' ? <img src={Logo100} style={{ height: "100px" }}></img>

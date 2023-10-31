@@ -308,12 +308,10 @@ const SortingTable = ({ match }) => {
                         );
                       }
                       if (cell.column.id == "role") {
-                        if (cell.value == "0") return <td>מנהל מערכת</td>;
-                        if (cell.value == "1") return <td>משתמש גדוד</td>;
-                        if (cell.value == "2") return <td>משתמש חטיבה</td>;
-                        if (cell.value == "3") return <td>משתמש אוגדה</td>;
-                        if (cell.value == "4") return <td>משתמש פיקוד</td>;
-                        if (cell.value == "5") return <td>משתמש כלל צה"ל</td>;
+                        if (cell.value == "0") return <td>הרשאת גוף מטכ"לי</td>;
+                        if (cell.value == "1") return <td>הרשאת פיקוד</td>;
+                        if (cell.value == "2")
+                          return <td>הרשאות תחום מסגרות טנ"א</td>;
                       }
                       if (cell.column.id == "unit") {
                         if (

@@ -220,15 +220,7 @@ const EditUserForm = ({ match }) => {
                     </Input>
                   </FormGroup>
 
-                  {data.role === "0" ? (
-                    <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                      הרשאת גוף מטכ"לי
-                    </div>
-                  ) : data.role === "2" ? (
-                    <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                      הרשאות תחום מסגרות טנ"א
-                    </div>
-                  ) : data.role === "1" ? (
+                  {data.role === "1" ? (
                     <>
                       <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         פיקוד

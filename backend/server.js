@@ -64,6 +64,9 @@ app.use("/api", ogdaRoutes);
 app.use("/api", pikodRoutes);
 
 //general routes
+const reportRoutes = require("./routes/reports/report");
+app.use("/api", reportRoutes);
+
 
 if (process.env.NODE_ENV === "production") {
 	//set static folder

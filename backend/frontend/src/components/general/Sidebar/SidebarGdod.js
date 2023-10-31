@@ -68,6 +68,8 @@ import {
 } from "reactstrap";
 
 import { isAuthenticated } from "auth/index";
+import holi from "assets/img/holi.png";
+
 
 function SidebarGdod(props) {
 	const { user } = isAuthenticated();
@@ -82,7 +84,7 @@ function SidebarGdod(props) {
 	return (
 		<>
 			<div className="logo">
-				<img src={mgm}></img>
+				<img src={holi}></img>
 			</div>
 			<Nav style={{ textAlign: "right" }}>
 				<li>

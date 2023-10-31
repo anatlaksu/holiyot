@@ -23,6 +23,8 @@ import history from "history.js";
 import { toast } from "react-toastify";
 
 import mgm from "assets/img/mgm.png";
+import holi from "assets/img/holi.png";
+
 
 function Signin() {
 	const [values, setValues] = useState({
@@ -129,7 +131,7 @@ function Signin() {
 						<Card className="shadow border-0">
 							<CardBody className="px-lg-5 py-lg-5">
 								<div className="text-center text-muted mb-4">
-									<img src={mgm}></img>
+									<img src={holi}></img>
 								</div>
 								<div className="text-center text-muted mb-4">
 									<small>התחברות</small>

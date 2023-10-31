@@ -30,235 +30,100 @@ import { produce } from "immer";
 import { generate } from "shortid";
 import { toast } from "react-toastify";
 import Select from "components/general/Select/AnimatedSelect";
+import deletepic from "assets/img/delete.png";
 
 const CarDataFormModal = (props) => {
 	const { user } = isAuthenticated();
 	//cardata
 	const [cardata, setCarData] = useState({});
+
 	const [units, setUnits] = useState([]);
-	const [jobs, setJobs] = useState([]);
-	const [subject, setSubject] = useState([]);
 
-	// התייצב
-	const [isChecked1, setIsChecked1] = useState(false);
-	// התייצב היום
-	const [isChecked2, setIsChecked2] = useState(false);
-	// חייגן
-	const [isChecked3, setIsChecked3] = useState(false);
-	// שמפ
-	const [isChecked4, setIsChecked4] = useState(false);
+	const [mails, setmailsarray] = useState([]);
 
-	// const loadcardata = async () => {
-	// 	await axios
-	// 		.get(`http://localhost:8000/api/reservevisits/${props.cardataid}`)
-	// 		.then(async (response) => {
-	// 			let tempcardata = response.data[0];
-	// 			Object.keys(tempcardata).map((key) => {
-	// 				switch (key) {
-	// 					case "dailSent":
-	// 						setIsChecked3(tempcardata[key]);
-	// 						break;
-	// 					case "present":
-	// 						setIsChecked1(tempcardata[key]);
-	// 						break;
-	// 					case "shamapOpen":
-	// 						setIsChecked4(tempcardata[key]);
-	// 						break;
-	// 					case "todayPresent":
-	// 						setIsChecked2(tempcardata[key]);
-	// 						break;
 
-	// 					default:
-	// 						break;
-	// 				}
-	// 			});
-	// 			setCarData(tempcardata);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.log(error);
-	// 		});
-	// };
+	const loadcardata = async () => {
+		await axios
+			.get(`http://localhost:8000/api/reservevisits/${props.cardataid}`)
+			.then(async (response) => {
+				let tempcardata = response.data[0];
+				setCarData(tempcardata);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
 
-	// function handleChange(evt) {
-	// 	const value = evt.target.value;
-	// 	setCarData({ ...cardata, [evt.target.name]: value });
-	// }
+	function handleChange(evt) {
+		const value = evt.target.value;
+		setCarData({ ...cardata, [evt.target.name]: value });
+	}
 
-	// function getUnits() {
-	// 	axios
-	// 		.get(`http://localhost:8000/api/units/${user.unit}`)
-	// 		.then((res) => {
-	// 			setUnits(res.data);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// }
+	function getUnits() {
+		axios
+			.get(`http://localhost:8000/api/units`)
+			.then((res) => {
+				setUnits(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
 
-	// function getJobs() {
-	// 	axios
-	// 		.get(`http://localhost:8000/api/job`)
-	// 		.then((res) => {
-	// 			setJobs(res.data);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// }
-	// function getSubject() {
-	// 	axios
-	// 		.get(`http://localhost:8000/api/subject`)
-	// 		.then((res) => {
-	// 			setSubject(res.data);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// }
+	function handleChange2(selectedOption, name) {
+		if (!(selectedOption.value == "בחר"))
+			setCarData({ ...cardata, [name]: selectedOption.value });
+		else {
+			setCarData({ ...cardata, [name]: "" });
+		}
+	}
 
-	// function handleChange2(selectedOption, name) {
-	// 	if (!(selectedOption.value == "בחר"))
-	// 		setCarData({ ...cardata, [name]: selectedOption.value });
-	// 	else {
-	// 		setCarData({ ...cardata, [name]: "" });
-	// 	}
-	// }
+	const clickSubmit = (event) => {
+		CheckFormData();
+	};
 
-	// function handleChange10(selectedOption, name) {
-	// 	if (!(selectedOption.value == "בחר"))
-	// 		setCarData({ ...cardata, [name]: selectedOption.value });
-	// 	else {
-	// 		setCarData({ ...cardata, [name]: "" });
-	// 	}
-	// }
+	const CheckFormData = () => {
+		//check for stuff isnt empty
+		var flag = true;
+		var ErrorReason = "";
 
-	// function handleChange3() {
-	// 	setIsChecked1(!isChecked1);
-	// }
-	// function handleChange4() {
-	// 	setIsChecked2(!isChecked2);
-	// }
-	// function handleChange5() {
-	// 	setIsChecked3(!isChecked3);
-	// }
-	// function handleChange6() {
-	// 	setIsChecked4(!isChecked4);
-	// }
+		if (cardata.name == "") {
+			flag = false;
+			ErrorReason += " שם ריק \n";
+		}
+		if (cardata.family == "") {
+			flag = false;
+			ErrorReason += " שם משפחה ריק \n";
+		}
+		if (cardata.pesonal_number == "") {
+			flag = false;
+			ErrorReason += "  מספר אישי ריק \n";
+		}
+		if (
+			document.getElementById("selta").options[
+				document.getElementById("selta").selectedIndex
+			].value == "בחר"
+		) {
+			flag = false;
+			ErrorReason += " סוג תא ריק \n";
+		}
 
-	// const clickSubmit = (event) => {
-	// 	CheckFormData();
-	// };
+		if (flag == true) {
+			Create();
+		} else {
+			toast.error(ErrorReason);
+		}
+	};
 
-	// const CheckFormData = () => {
-	// 	//check for stuff isnt empty
-	// 	var flag = true;
-	// 	var ErrorReason = "";
-
-	// 	if (cardata.name == "") {
-	// 		flag = false;
-	// 		ErrorReason += " שם ריק \n";
-	// 	}
-	// 	if (cardata.family == "") {
-	// 		flag = false;
-	// 		ErrorReason += " שם משפחה ריק \n";
-	// 	}
-	// 	if (cardata.pesonal_number == "") {
-	// 		flag = false;
-	// 		ErrorReason += "  מספר אישי ריק \n";
-	// 	}
-	// 	if (
-	// 		document.getElementById("selta").options[
-	// 			document.getElementById("selta").selectedIndex
-	// 		].value == "בחר"
-	// 	) {
-	// 		flag = false;
-	// 		ErrorReason += " סוג תא ריק \n";
-	// 	}
-
-	// 	try {
-	// 		let c = cardata.pesonal_number.charAt(0);
-	// 		if (c >= "0" && c <= "9") {
-	// 			// it is a number
-	// 			let temppersonalnumber = cardata.pesonal_number;
-	// 			temppersonalnumber = "s" + temppersonalnumber;
-	// 			cardata.pesonal_number = temppersonalnumber;
-	// 		} else {
-	// 			// it isn't
-	// 			if (c == c.toUpperCase()) {
-	// 				//UpperCase Letter -Make Lowercase
-	// 				let tempc = c.toLowerCase();
-	// 				let temppersonalnumber = cardata.pesonal_number;
-	// 				temppersonalnumber = temppersonalnumber.substring(1);
-	// 				temppersonalnumber = tempc + temppersonalnumber;
-	// 				cardata.pesonal_number = temppersonalnumber;
-	// 			}
-	// 			if (c == c.toLowerCase()) {
-	// 				//LowerCase Letter - All Good
-	// 			}
-	// 		}
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 		flag = false;
-	// 		ErrorReason += "  מספר אישי פגום \n";
-	// 	}
-
-	// 	console.log(typeof isChecked2);
-	// 	console.log(isChecked2);
-
-	// 	cardata.present = isChecked1;
-	// 	cardata.todayPresent = isChecked2;
-	// 	cardata.dailSent = isChecked3;
-	// 	cardata.shamapOpen = isChecked4;
-
-	// 	if (isChecked1) {
-	// 		setCarData({ ...cardata, present: cardata.present });
-	// 	} else {
-	// 		setCarData({ ...cardata, present: cardata.present });
-	// 	}
-	// 	if (isChecked2) {
-	// 		setCarData({ ...cardata, todayPresent: cardata.todayPresent });
-	// 	} else {
-	// 		setCarData({ ...cardata, todayPresent: cardata.todayPresent });
-	// 	}
-	// 	if (isChecked3) {
-	// 		setCarData({ ...cardata, dailSent: cardata.dailSent });
-	// 	} else {
-	// 		setCarData({ ...cardata, dailSent: cardata.dailSent });
-	// 	}
-	// 	if (isChecked4) {
-	// 		setCarData({ ...cardata, shamapOpen: cardata.shamapOpen });
-	// 	} else {
-	// 		setCarData({ ...cardata, shamapOpen: cardata.shamapOpen });
-	// 	}
-
-	// 	if (flag == true) {
-	// 		if (props.cardataid != undefined) {
-	// 			if (isChecked2) {
-	// 				Createarchive();
-	// 			}
-	// 			Update();
-	// 		} else {
-	// 			if (isChecked2) {
-	// 				Createarchive();
-	// 			}
-	// 			Create();
-	// 		}
-	// 	} else {
-	// 		toast.error(ErrorReason);
-	// 	}
-	// };
-
-	// async function Create() {
-	// 	let tempramam = { ...cardata };
-	// 	tempramam.unitid = props.unitid;
-	// 	tempramam.userid = user._id;
-	// 	let result = await axios.post(
-	// 		`http://localhost:8000/api/reservevisits`,
-	// 		tempramam
-	// 	);
-	// 	toast.success(`איש מילואים נוסף בהצלחה`);
-	// 	props.ToggleForModal();
-	// }
+	async function Create() {
+		let tempramam = { ...cardata };
+		let result = await axios.post(
+			`http://localhost:8000/api/report`,
+			tempramam
+		);
+		toast.success(`בקשה לחוליה נוסף בהצלחה`);
+		props.ToggleForModal();
+	}
 
 	// async function Update() {
 	// 	//update ramam
@@ -272,40 +137,21 @@ const CarDataFormModal = (props) => {
 	// 	props.ToggleForModal();
 	// }
 
-	// async function Createarchive() {
-	// 	//update ramam
-	// 	const currentDate = new Date();
-	// 	let tempramam = { ...cardata, date: currentDate };
-	// 	tempramam.unitid = props.unitid;
-	// 	tempramam.userid = user._id;
-	// 	let result = await axios.post(
-	// 		`http://localhost:8000/api/archivedata`,
-	// 		tempramam
-	// 	);
-	// 	// toast.success(`איש מילואים נוסף בהצלחה`);
-	// 	props.ToggleForModal();
-	// }
 
-	// function init() {
-	// 	if (props.cardataid != undefined) {
-	// 		loadcardata();
-	// 	}
-	// }
+	function init() {
+		if (props.cardataid != undefined) {
+			loadcardata();
+		}
+	}
 
-	// useEffect(() => {
-	// 	if (props.isOpen == true) {
-	// 		getSubject();
-	// 		getJobs();
-	// 		getUnits();
-	// 		init();
-	// 	} else {
-	// 		setCarData({});
-	// 		setIsChecked1(false);
-	// 		setIsChecked2(false);
-	// 		setIsChecked3(false);
-	// 		setIsChecked4(false);
-	// 	}
-	// }, [props.isOpen]);
+	useEffect(() => {
+		if (props.isOpen == true) {
+			getUnits();
+			init();
+		} else {
+			setCarData({});
+		}
+	}, [props.isOpen]);
 
 	return (
 		<>
@@ -342,59 +188,25 @@ const CarDataFormModal = (props) => {
 							</CardTitle>
 							{/*headline*/}
 						</CardHeader>
-						{/* <CardBody style={{ direction: "rtl" }}>
+						<CardBody style={{ direction: "rtl" }}>
 							<Container>
 								<Row>
-									<Col
+								<Col
 										style={{
 											justifyContent: "right",
 											alignContent: "right",
 											textAlign: "right",
 										}}
 									>
-										<h6 style={{}}>שם</h6>
-										<Input
-											placeholder="שם"
-											type="string"
-											name="name"
-											value={cardata.name}
-											onChange={handleChange}
-										/>
-									</Col>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<h6 style={{}}>שם משפחה</h6>
-										<Input
-											placeholder="שם משפחה"
-											type="string"
-											name="family"
-											value={cardata.family}
-											onChange={handleChange}
-										/>
-									</Col>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<h6 style={{}}>יחידה</h6>
+										<h6 style={{}}>מרחב</h6>
 
 										<Select
 											data={units}
 											handleChange2={handleChange2}
 											name="unit"
-											val={cardata.unit}
+											val={cardata.merhav}
 										/>
 									</Col>
-								</Row>
-								<Row>
 									<Col
 										style={{
 											justifyContent: "right",
@@ -402,129 +214,26 @@ const CarDataFormModal = (props) => {
 											textAlign: "right",
 										}}
 									>
+										<h6 style={{}}>גוף דורש</h6>
 										<Input
-											placeholder="התייצב"
-											type="checkbox"
-											name="present"
-											value={cardata.present}
-											onChange={handleChange3}
-											checked={isChecked1}
-										/>
-										<div style={{ paddingRight: "20px" }}>התייצב</div>
-									</Col>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<Input
-											placeholder="התייצב היום"
-											type="checkbox"
-											name="todayPresent"
-											value={cardata.todayPresent}
-											onChange={handleChange4}
-											checked={isChecked2}
-										/>
-										<div style={{ paddingRight: "20px" }}>התייצב היום</div>
-									</Col>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<Input
-											placeholder="נשלח חייגן"
-											type="checkbox"
-											name="dailSent"
-											value={cardata.dailSent}
-											onChange={handleChange5}
-											checked={isChecked3}
-										/>
-										<div style={{ paddingRight: "20px" }}>נשלח חייגן</div>
-									</Col>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<Input
-											placeholder='נפתח שמ"פ'
-											type="checkbox"
-											name="shamapOpen"
-											value={cardata.shamapOpen}
-											onChange={handleChange6}
-											checked={isChecked4}
-										/>
-										<div style={{ paddingRight: "20px" }}>נפתח שמ"פ</div>
-									</Col>
-								</Row>
-								<Row>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<h6 style={{}}>מקצוע</h6>
-										<Select
-											data={subject}
-											name="subject"
-											value={cardata.subject}
-											handleChange2={handleChange10}
-										/>
-									</Col>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<h6 style={{}}>תפקיד</h6>
-
-										<Select
-											data={jobs}
-											handleChange2={handleChange10}
-											name="job"
-											val={cardata.job}
-										/>
-									</Col>
-								</Row>
-								<Row>
-									<Col
-										style={{
-											justifyContent: "right",
-											alignContent: "right",
-											textAlign: "right",
-										}}
-									>
-										<h6 style={{}}>תא</h6>
-										<Input
-											placeholder="שם"
+											placeholder="גוף דורש"
 											type="select"
-											name="ta"
-											value={cardata.ta}
+											name="body_requires"
+											value={cardata.body_requires}
 											onChange={handleChange}
-											id="selta"
+											id="selbody"
 										>
 											<option value={"בחר"}>{"בחר"}</option>
-											<option value={"הפעלה"}>{"הפעלה"}</option>
-											<option value={"רפואה"}>{"רפואה"}</option>
-											<option value={"שליטה"}>{"שליטה"}</option>
-											<option value={"רישום ודיווח"}>{"רישום ודיווח"}</option>
-											<option value={"פרט ומשפחות"}>{"פרט ומשפחות"}</option>
-											<option value={"מפקד"}>{"מפקד"}</option>
-											<option value={"ללא"}>{"ללא"}</option>
+											<option value={'פצ"ן'}>{'פצ"ן'}</option>
+											<option value={'פד"ם'}>{'פד"ם'}</option>
+											<option value={'פקמ"ז'}>{'פקמ"ז'}</option>
+											<option value={'פקע"ר'}>{'פקע"ר'}</option>
+											<option value={'הובלה'}>{'הובלה'}</option>
+											<option value={'חט"ל'}>{'חט"ל'}</option>
+											<option value={'רפ"ט'}>{'רפ"ט'}</option>
+											<option value={'מש"א'}>{'מש"א'}</option>
 										</Input>
 									</Col>
-
 									<Col
 										style={{
 											justifyContent: "right",
@@ -532,17 +241,17 @@ const CarDataFormModal = (props) => {
 											textAlign: "right",
 										}}
 									>
-										<h6 style={{}}>הערות</h6>
+										<h6 style={{}}>יחידה דורשת</h6>
 										<Input
-											placeholder="הערות"
+											placeholder="יחידה דורשת"
 											type="string"
-											name="details"
-											value={cardata.details}
+											name="unit_requires"
+											value={cardata.unit_requires}
 											onChange={handleChange}
 										/>
 									</Col>
 								</Row>
-								<Row style={{ marginTop: "1%" }}>
+								<Row>
 									<Col
 										style={{
 											justifyContent: "right",
@@ -550,12 +259,12 @@ const CarDataFormModal = (props) => {
 											textAlign: "right",
 										}}
 									>
-										<h6 style={{}}>מספר אישי</h6>
+										<h6 style={{}}>סוג כיתה</h6>
 										<Input
-											placeholder="מספר אישי"
+											placeholder="סוג כיתה"
 											type="string"
-											name="pesonal_number"
-											value={cardata.pesonal_number}
+											name="class"
+											value={cardata.class}
 											onChange={handleChange}
 										/>
 									</Col>
@@ -566,23 +275,346 @@ const CarDataFormModal = (props) => {
 											textAlign: "right",
 										}}
 									>
-										<h6 style={{}}>תעודת זהות</h6>
+										<h6 style={{}}>כמות כיתות</h6>
 										<Input
-											placeholder="תעודת זהות"
+											placeholder="כמות כיתות"
 											type="number"
-											name="civilian_number"
-											value={cardata.civilian_number}
+											name="number_class"
+											value={cardata.number_class}
 											onChange={handleChange}
 										/>
 									</Col>
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>מקור החוליה</h6>
+										<Input
+											placeholder="מקור החוליה"
+											type="select"
+											name="source_holi"
+											value={cardata.source_holi}
+											onChange={handleChange}
+											id="selholi"
+										>
+											<option value={"בחר"}>{"בחר"}</option>
+											<option value={'טנ"א ארצי'}>{'טנ"א ארצי'}</option>
+											<option value={'חט"ל'}>{'חט"ל'}</option>
+											<option value={'רפ"ט'}>{'רפ"ט'}</option>
+											<option value={'מש"א'}>{'מש"א'}</option>
+											<option value={"אגד"}>{"אגד"}</option>
+											<option value={"תעשייה"}>{"תעשייה"}</option>
+										</Input>
+									</Col>
 								</Row>
+								<Row>
+								<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>מהות התקלה</h6>
+										<Input
+											placeholder="מהות התקלה"
+											type="string"
+											name="what_happend"
+											value={cardata.what_happend}
+											onChange={handleChange}
+										/>
+									</Col>
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>צ'</h6>
+										<Input
+											placeholder="צ'"
+											type="string"
+											name="zadik"
+											value={cardata.zadik}
+											onChange={handleChange}
+										/>
+									</Col>
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>אל מרחב</h6>
+										<Input
+											placeholder="אל מרחב"
+											type="select"
+											name="to_merhav"
+											value={cardata.to_merhav}
+											onChange={handleChange}
+											id="selmerhav"
+										>
+											<option value={"בחר"}>{"בחר"}</option>
+											<option value={'פצ"ן'}>{'פצ"ן'}</option>
+											<option value={'פד"ם'}>{'פד"ם'}</option>
+											<option value={'פקמ"ז'}>{'פקמ"ז'}</option>
+											<option value={'פקע"ר'}>{'פקע"ר'}</option>
+											<option value={'הובלה'}>{'הובלה'}</option>
+											<option value={'חט"ל'}>{'חט"ל'}</option>
+											<option value={'רפ"ט'}>{'רפ"ט'}</option>
+											<option value={'מש"א'}>{'מש"א'}</option>
+										</Input>
+									</Col>
+								</Row>
+								<Row>
+								<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>מיקום נדרש</h6>
+										<Input
+											placeholder="מיקום נדרש"
+											type="string"
+											name="mikom"
+											value={cardata.mikom}
+											onChange={handleChange}
+										/>
+									</Col>
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>תאריך נדרש לחוליה</h6>
+										<Input
+											placeholder="תאריך נדרש לחוליה"
+											type="date"
+											name="date_need"
+											value={cardata.date_need}
+											onChange={handleChange}
+										/>
+									</Col>
+									<Col></Col>
+								</Row>
+								<Row>
+								<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>תדרוך אל"ם</h6>
+										<Input
+											placeholder='תדרוך אל"ם'
+											type="select"
+											name="alm"
+											value={cardata.alm}
+											onChange={handleChange}
+											id="selalm"
+										>
+											<option value={"בחר"}>{"בחר"}</option>
+											<option value={true}>{'כן'}</option>
+											<option value={false}>{'לא'}</option>
+										</Input>
+									</Col>
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>אישור פיקוד</h6>
+										<Input
+											placeholder='אישור פיקוד'
+											type="select"
+											name="pikod"
+											value={cardata.pikod}
+											onChange={handleChange}
+											id="selpikod"
+										>
+											<option value={"בחר"}>{"בחר"}</option>
+											<option value={true}>{'כן'}</option>
+											<option value={false}>{'לא'}</option>
+										</Input>
+									</Col>									
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>אישור השולחן</h6>
+										<Input
+											placeholder='אישור השולחן'
+											type="select"
+											name="table"
+											value={cardata.table}
+											onChange={handleChange}
+											id="seltable"
+										>
+											<option value={"בחר"}>{"בחר"}</option>
+											<option value={true}>{'כן'}</option>
+											<option value={false}>{'לא'}</option>
+										</Input>
+									</Col>																		
+								</Row>
+								<Row>
+								<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>שם איש קשר</h6>
+										<Input
+											placeholder="שם איש קשר"
+											type="string"
+											name="namecontact"
+											value={cardata.namecontact}
+											onChange={handleChange}
+										/>
+									</Col>	
+									<Col
+										style={{
+											justifyContent: "right",
+											alignContent: "right",
+											textAlign: "right",
+										}}
+									>
+										<h6 style={{}}>טלפון איש קשר</h6>
+										<Input
+											placeholder="טלפון איש קשר"
+											type="string"
+											name="numbercontact"
+											value={cardata.numbercontact}
+											onChange={handleChange}
+										/>
+									</Col>							
+									<Col></Col>
+								</Row>
+								{mails.length == 0 ? (
+													<Row>
+														<Col
+															style={{ display: "flex", textAlign: "right" }}
+														>
+															<Button
+																style={{ width: "100px", padding: "5px" }}
+																type="button"
+																onClick={() => {
+																	setmailsarray((currentSpec) => [
+																		...currentSpec,
+																		{ id: generate() },
+																	]);
+																}}
+															>
+																הוסף מייל
+															</Button>
+														</Col>
+													</Row>
+												) : (
+													mails.map((p, index) => {
+														return (
+															<div>
+																{index == 0 ? (
+																	<Row>
+																		<Col
+																			style={{
+																				display: "flex",
+																				textAlign: "right",
+																			}}
+																		>
+																			<Button
+																				style={{
+																					width: "100px",
+																					padding: "5px",
+																				}}
+																				type="button"
+																				onClick={() => {
+																					setmailsarray((currentSpec) => [
+																						...currentSpec,
+																						{ id: generate() },
+																					]);
+																				}}
+																			>
+																				 הוסף מייל
+																			</Button>
+																		</Col>
+																	</Row>
+																) : null}
+																{
+																	<Row>
+																		<Col
+																			xs={12}
+																			md={4}
+																		>
+																			<div>
+																				<p
+																					style={{
+																						margin: "0px",
+																						float: "right",
+																					}}
+																				>
+																					  מייל לשליחה
+																				</p>
+																				<Input
+																					onChange={(e) => {
+																						const mail = e.target.value;
+																						if (e.target.value != "")
+																							setmailsarray((currentSpec) =>
+																								produce(currentSpec, (v) => {
+																									v[index].mail =
+																									mail;
+																								})
+																							);
+																					}}
+																					placeholder="מייל"
+																					value={p.mail}
+																					type="string"
+																				/>
+																			</div>
+																		</Col>
+																	</Row>
+																}
+																<Button
+																	type="button"
+																	onClick={() => {
+																		setmailsarray((currentSpec) =>
+																			currentSpec.filter((x) => x.id !== p.id)
+																		);
+																	}}
+																>
+																	<img
+																		src={deletepic}
+																		height="20px"
+																	></img>
+																</Button>
+															</div>
+														);
+													})
+												)}
+
+
 								<div style={{ textAlign: "center", paddingTop: "20px" }}>
 									<button className="btn" onClick={clickSubmit}>
-										עדכן
+										שלח
 									</button>
 								</div>
 							</Container>
-						</CardBody> */}
+						</CardBody>
 					</Card>
 				</ModalBody>
 			</Modal>

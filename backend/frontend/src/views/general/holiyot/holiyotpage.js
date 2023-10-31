@@ -17,12 +17,13 @@ import {
 } from "reactstrap";
 import axios from 'axios';
 import { signin, authenticate, isAuthenticated } from 'auth/index';
+import HoliyotreqTable from 'components/bazak/Filters/holiyotreqTable/SortingTable.js';
 
 function Holipage({ match }) {
 
   return (
     <>
-      <h1>כאן יהיה טבלת בקשות חוליה </h1>     {/*spinner in table*/}
+    <HoliyotreqTable />     {/*spinner in table*/}
     </>
   );
 }

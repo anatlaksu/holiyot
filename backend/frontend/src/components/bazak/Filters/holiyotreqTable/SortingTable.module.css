@@ -1,0 +1,7 @@
+.tr > td  {
+  font-weight: 100 !important
+}
+
+.tr > th {
+  background-color: #5FD0CA !important;
+}

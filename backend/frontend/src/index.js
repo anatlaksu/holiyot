@@ -43,6 +43,8 @@ import DashboardPage from "views/general/dashboardpage/DashboardPage";
 import UnitTreePage from "views/general/unittreepage/UnitTreePage";
 import AboutPage from "views/general/aboutpage/AboutPage";
 import StatisticsPage from "views/general/statisticspage/StatisticsPage";
+import Holipage from "views/general/holiyot/holiyotpage";
+import Holireport from "views/general/holiyot/holiyotreport"
 
 ReactDOM.render(
 	<>
@@ -84,6 +86,17 @@ ReactDOM.render(
 								exact
 								component={DashboardPage}
 							/>
+							<LoggedinRoute
+								path="/holipage"
+								exact
+								component={Holipage}
+							/>
+							<LoggedinRoute
+								path="/holireport"
+								exact
+								component={Holireport}
+							/>
+
 							{/* <LoggedinRoute
 								path="/statisticspage"
 								exact

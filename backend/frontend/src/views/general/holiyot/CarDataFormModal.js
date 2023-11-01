@@ -171,30 +171,6 @@ const CarDataFormModal = (props) => {
     //     ErrorReason.push(' אישור תחום כשירות מסגרות הטנ"א ריק ');
     //   }
 
-	let st="";
-	if(user.role == "2" && cardata.status == "חדש"){
-		if (
-			document.getElementById("selkshirot_tne").options[
-			  document.getElementById("selkshirot_tne").selectedIndex
-			].value == "true"
-		){
-			st='ממתין לאישור מכלול טנ"א'
-			console.log(st);
-			flag = false;
-			ErrorReason.push("  הוזן אישור  ");	  
-		}
-		if(document.getElementById("selkshirot_tne").options[
-			document.getElementById("selkshirot_tne").selectedIndex
-		  ].value == "false"){
-			st='נדחה'
-			console.log(st);
-			flag = false;
-			ErrorReason.push("  הוזן נדחה  ");	  
-
-		}
-	}
-	setCarData({ ...cardata,status:st });
-	console.log(cardata.status);
 	// else if(user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א'){
 	// 	if(document.getElementById("selmatcal_tne").options[
 	// 		document.getElementById("selmatcal_tne").selectedIndex
@@ -209,9 +185,9 @@ const CarDataFormModal = (props) => {
 
 
     if (flag == true) {
-		// if((user.role == "2" && (cardata.status == 'ממתין לאישור מכלול טנ"א' || cardata.status == 'נדחה')) || (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')){
-		// 	Update();
-		// }
+		if((user.role == "2" && cardata.status == 'חדש') || (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')){
+			Update();
+		}
       Create();
     } else {
       ErrorReason.forEach((e) => {
@@ -233,7 +209,21 @@ const CarDataFormModal = (props) => {
   async function Update() {
   	//update ramam
   	var tempramamid = props.cardataid;
-	let tempramam= { ...cardata,mail:mails};
+	let tempramam;
+	if(user.role == "2" && cardata.status == "חדש"){
+		if (
+			document.getElementById("selkshirot_tne").options[
+			  document.getElementById("selkshirot_tne").selectedIndex
+			].value == "true"
+		){
+			tempramam={...cardata,mail:mails,status:'ממתין לאישור מכלול טנ"א'}
+		}
+		if(document.getElementById("selkshirot_tne").options[
+			document.getElementById("selkshirot_tne").selectedIndex
+		  ].value == "false"){
+			tempramam={...cardata,mail:mails,status:'נדחה'}
+		}
+	}
   	let result = await axios.put(
   		`http://localhost:8000/api/report/${tempramamid}`,
   		tempramam

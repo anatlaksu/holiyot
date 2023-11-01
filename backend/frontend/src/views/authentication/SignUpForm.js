@@ -249,9 +249,10 @@ export default function SignUpForm() {
                       onChange={handleChange}
                     >
                       <option value="">הרשאה</option>
-                      <option value="0">הרשאת גוף מטכ"לי</option>
+                      {/* <option value="0">הרשאת מכלול טנ"א מטכ"לי</option> */}
                       <option value="1">הרשאת פיקוד</option>
                       {/* <option value="2">הרשאות תחום מסגרות טנ"א</option> */}
+                      <option value="3">הרשאת גוף משלח</option>
                     </Input>
                   </FormGroup>
 

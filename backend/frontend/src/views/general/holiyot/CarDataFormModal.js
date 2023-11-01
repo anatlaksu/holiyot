@@ -36,6 +36,7 @@ const CarDataFormModal = (props) => {
   const { user } = isAuthenticated();
   //cardata
   const [cardata, setCarData] = useState({});
+  const [msdArray, setMSDArray] = useState([]);
 
   const [units, setUnits] = useState([]);
 
@@ -63,7 +64,8 @@ const CarDataFormModal = (props) => {
 
   function getUnits() {
     axios
-      .get(`http://localhost:8000/api/units/${user.unit}`)
+      // .get(`http://localhost:8000/api/units/${user.unit}`)
+      .get(`http://localhost:8000/api/units/`)
       .then((res) => {
         setUnits(res.data);
       })
@@ -161,34 +163,32 @@ const CarDataFormModal = (props) => {
       ErrorReason.push(" לא הוזן כתובת מייל");
     }
 
-	if(user.role=="3" && cardata.status == 'אישור'){
-		if (!cardata.date_arrival) {
-			flag = false;
-			ErrorReason.push(" תאריך הגעה ליעד ריק ");
-		  }
-		  if (!cardata.date_start) {
-			flag = false;
-			ErrorReason.push(" תאריך התחלת המשימה ריק ");
-		  }
-		  if (!cardata.date_end) {
-			flag = false;
-			ErrorReason.push(" תאריך סיום המשימה ריק ");
-		  }
-		  if (!cardata.date_return) {
-			flag = false;
-			ErrorReason.push(" תאריך הגעה ליחידת האם ריק ");
-		  }
-		  if (cardata.holi_group == "" || cardata.holi_group === undefined) {
-			flag = false;
-			ErrorReason.push(" חברי החוליה ריק ");
-		  }
-		  if (cardata.note == "" || cardata.note === undefined) {
-			flag = false;
-			ErrorReason.push("הערות ריק ");
-		  }
-	  
-	}
-
+    if (user.role == "3" && cardata.status == "אישור") {
+      if (!cardata.date_arrival) {
+        flag = false;
+        ErrorReason.push(" תאריך הגעה ליעד ריק ");
+      }
+      if (!cardata.date_start) {
+        flag = false;
+        ErrorReason.push(" תאריך התחלת המשימה ריק ");
+      }
+      if (!cardata.date_end) {
+        flag = false;
+        ErrorReason.push(" תאריך סיום המשימה ריק ");
+      }
+      if (!cardata.date_return) {
+        flag = false;
+        ErrorReason.push(" תאריך הגעה ליחידת האם ריק ");
+      }
+      if (cardata.holi_group == "" || cardata.holi_group === undefined) {
+        flag = false;
+        ErrorReason.push(" חברי החוליה ריק ");
+      }
+      if (cardata.note == "" || cardata.note === undefined) {
+        flag = false;
+        ErrorReason.push("הערות ריק ");
+      }
+    }
 
     if (flag == true) {
       if (
@@ -206,8 +206,40 @@ const CarDataFormModal = (props) => {
     }
   };
 
+  const makemsd = (length) => {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+  };
+
+  // const msdExcist = (msd) => {
+  //   axios
+  //     .get(`http://localhost:8000/api/report/findmsd/${msd}`)
+  //     .then(async (response) => {
+  //       if (response.data.length > 0) {
+  //         return true;
+  //       } else {
+  //         return false;
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
+
   async function Create() {
-    let tempramam = { ...cardata, mail: mails, status: "חדש" };
+    let msd = makemsd(6);
+    while (msdArray.includes(msd)) {
+      msd = makemsd(6);
+    }
+    let tempramam = { ...cardata, mail: mails, status: "חדש", msd: msd };
     let result = await axios.post(
       `http://localhost:8000/api/report`,
       tempramam
@@ -270,6 +302,16 @@ const CarDataFormModal = (props) => {
   }
 
   useEffect(() => {
+    axios
+      .get(`http://localhost:8000/api/report/`)
+      .then(async (response) => {
+        response.data.forEach((element) => {
+          msdArray.push(element.msd);
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     if (props.isOpen == true) {
       init();
 
@@ -301,6 +343,12 @@ const CarDataFormModal = (props) => {
     )
       return false;
     else if (user.role == "2" || user.role == "0") return false;
+    else if (
+      user.role == "3" ||
+      cardata.status == "חדש" ||
+      cardata.status == undefined
+    )
+      return false;
     else return true;
   };
   return (
@@ -369,8 +417,7 @@ const CarDataFormModal = (props) => {
                         handleChange2={handleChange2}
                         name="body_requires"
                         val={cardata.body_requires}
-            						isDisabled={getIfDisabled()}
-
+                        isDisabled={getIfDisabled()}
                       />
                     </Col>
                     <Col
@@ -587,7 +634,6 @@ const CarDataFormModal = (props) => {
                         textAlign: "right",
                       }}
                     >
-
                       <h6 style={{}}>מועד רצוי להוצאת החוליה</h6>
                       <Input
                         placeholder="מועד רצוי להוצאת החוליה"
@@ -617,9 +663,8 @@ const CarDataFormModal = (props) => {
                         name="namecontact"
                         value={cardata.namecontact}
                         onChange={handleChange}
-						disabled={getIfDisabled()}     
-	                 />
-
+                        disabled={getIfDisabled()}
+                      />
                     </Col>
                     <Col
                       style={{
@@ -635,155 +680,150 @@ const CarDataFormModal = (props) => {
                         name="numbercontact"
                         value={cardata.numbercontact}
                         onChange={handleChange}
-						disabled={getIfDisabled()}
-
+                        disabled={getIfDisabled()}
                       />
                     </Col>
                   </Row>
                 </FormGroup>
 
-
-{getIfDisabled()? (
-	<>
-	                 { mails.map((p, index) => {
-                    return (
-                      <div>
-                        {
-                          <Row>
-                            <Col xs={12} md={4}>
-                              <div>
-                                <p
-                                  style={{
-                                    margin: "0px",
-                                    float: "right",
-                                  }}
-                                >
-                                  מייל לשליחה
-                                </p>
-                                <Input
-                                  onChange={(e) => {
-                                    const mail = e.target.value;
-                                    setmailsarray((currentSpec) =>
-                                      produce(currentSpec, (v) => {
-                                        v[index].mail = mail;
-                                      })
-                                    );
-                                  }}
-                                  placeholder="מייל"
-                                  value={p.mail}
-                                  type="email"
-								  disabled={true}
-                                />
-                              </div>
-                            </Col>
-                          </Row>
-                        }
-                      </div>
-                    );
-				})}
-
-	</>
-):(
-	<>
-	                {mails.length == 0 ? (
-
-                  <Row>
-                    <Col style={{ display: "flex", textAlign: "right" }}>
-                      <Button
-                        style={{ width: "100px", padding: "5px" }}
-                        type="button"
-                        onClick={() => {
-                          setmailsarray((currentSpec) => [
-                            ...currentSpec,
-                            { id: generate() },
-                          ]);
-                        }}
-                        disabled={user.role === "3"}
-                      >
-                        הוסף מייל
-                      </Button>
-                    </Col>
-                  </Row>
+                {getIfDisabled() ? (
+                  <>
+                    {mails.map((p, index) => {
+                      return (
+                        <div>
+                          {
+                            <Row>
+                              <Col xs={12} md={4}>
+                                <div>
+                                  <p
+                                    style={{
+                                      margin: "0px",
+                                      float: "right",
+                                    }}
+                                  >
+                                    מייל לשליחה
+                                  </p>
+                                  <Input
+                                    onChange={(e) => {
+                                      const mail = e.target.value;
+                                      setmailsarray((currentSpec) =>
+                                        produce(currentSpec, (v) => {
+                                          v[index].mail = mail;
+                                        })
+                                      );
+                                    }}
+                                    placeholder="מייל"
+                                    value={p.mail}
+                                    type="email"
+                                    disabled={true}
+                                  />
+                                </div>
+                              </Col>
+                            </Row>
+                          }
+                        </div>
+                      );
+                    })}
+                  </>
                 ) : (
-                  mails.map((p, index) => {
-                    return (
-                      <div>
-                        {index == 0 ? (
-                          <Row>
-                            <Col
-                              style={{
-                                display: "flex",
-                                textAlign: "right",
-                              }}
-                            >
-                              <Button
-                                style={{
-                                  width: "100px",
-                                  padding: "5px",
-                                }}
-                                type="button"
-                                onClick={() => {
-                                  setmailsarray((currentSpec) => [
-                                    ...currentSpec,
-                                    { id: generate() },
-                                  ]);
-                                }}
-                                disabled={user.role === "3"}
-                              >
-                                הוסף מייל
-                              </Button>
-                            </Col>
-                          </Row>
-                        ) : null}
-                        {
-                          <Row>
-                            <Col xs={12} md={4}>
-                              <div>
-                                <p
+                  <>
+                    {mails.length == 0 ? (
+                      <Row>
+                        <Col style={{ display: "flex", textAlign: "right" }}>
+                          <Button
+                            style={{ width: "100px", padding: "5px" }}
+                            type="button"
+                            onClick={() => {
+                              setmailsarray((currentSpec) => [
+                                ...currentSpec,
+                                { id: generate() },
+                              ]);
+                            }}
+                            disabled={user.role === "3"}
+                          >
+                            הוסף מייל
+                          </Button>
+                        </Col>
+                      </Row>
+                    ) : (
+                      mails.map((p, index) => {
+                        return (
+                          <div>
+                            {index == 0 ? (
+                              <Row>
+                                <Col
                                   style={{
-                                    margin: "0px",
-                                    float: "right",
+                                    display: "flex",
+                                    textAlign: "right",
                                   }}
                                 >
-                                  מייל לשליחה
-                                </p>
-                                <Input
-                                  onChange={(e) => {
-                                    const mail = e.target.value;
-                                    setmailsarray((currentSpec) =>
-                                      produce(currentSpec, (v) => {
-                                        v[index].mail = mail;
-                                      })
-                                    );
-                                  }}
-                                  placeholder="מייל"
-                                  value={p.mail}
-                                  type="email"
-                                  disabled={user.role === "3"}
-                                />
-                              </div>
-                            </Col>
-                          </Row>
-                        }
-                        <Button
-                          type="button"
-                          onClick={() => {
-                            setmailsarray((currentSpec) =>
-                              currentSpec.filter((x) => x.id !== p.id)
-                            );
-                          }}
-                          disabled={user.role === "3"}
-                        >
-                          <img src={deletepic} height="20px"></img>
-                        </Button>
-                      </div>
-                    );
-                  })
+                                  <Button
+                                    style={{
+                                      width: "100px",
+                                      padding: "5px",
+                                    }}
+                                    type="button"
+                                    onClick={() => {
+                                      setmailsarray((currentSpec) => [
+                                        ...currentSpec,
+                                        { id: generate() },
+                                      ]);
+                                    }}
+                                    disabled={user.role === "3"}
+                                  >
+                                    הוסף מייל
+                                  </Button>
+                                </Col>
+                              </Row>
+                            ) : null}
+                            {
+                              <Row>
+                                <Col xs={12} md={4}>
+                                  <div>
+                                    <p
+                                      style={{
+                                        margin: "0px",
+                                        float: "right",
+                                      }}
+                                    >
+                                      מייל לשליחה
+                                    </p>
+                                    <Input
+                                      onChange={(e) => {
+                                        const mail = e.target.value;
+                                        setmailsarray((currentSpec) =>
+                                          produce(currentSpec, (v) => {
+                                            v[index].mail = mail;
+                                          })
+                                        );
+                                      }}
+                                      placeholder="מייל"
+                                      value={p.mail}
+                                      type="email"
+                                      disabled={user.role === "3"}
+                                    />
+                                  </div>
+                                </Col>
+                              </Row>
+                            }
+                            <Button
+                              type="button"
+                              onClick={() => {
+                                setmailsarray((currentSpec) =>
+                                  currentSpec.filter((x) => x.id !== p.id)
+                                );
+                              }}
+                              disabled={user.role === "3"}
+                            >
+                              <img src={deletepic} height="20px"></img>
+                            </Button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </>
                 )}
-	</>
-)}
- 
- 
+
                 <div
                   tag="h4"
                   style={{
@@ -952,113 +992,110 @@ const CarDataFormModal = (props) => {
                       </Row>
                     </FormGroup>
                   )}
-				  {user.role == "3" &&
-                  cardata.status == 'אישור' && (
-                    <FormGroup>
-                      <Row>
-					  <Col
-                      style={{
-                        justifyContent: "right",
-                        alignContent: "right",
-                        textAlign: "right",
-                      }}
-                    >
-                      <h6 style={{}}>שעת הגעה ליעד</h6>
-                      <Input
-                        placeholder="שעת הגעה ליעד"
-                        type="datetime-local"
-                        name="date_arrival"
-                        value={cardata.date_arrival}
-                        onChange={handleChange}
-                      />
-                    </Col>
-					<Col
-                      style={{
-                        justifyContent: "right",
-                        alignContent: "right",
-                        textAlign: "right",
-                      }}
-                    >
-                      <h6 style={{}}>שעת התחלת המשימה</h6>
-                      <Input
-                        placeholder="שעת התחלת המשימה"
-                        type="datetime-local"
-                        name="date_start"
-                        value={cardata.date_start}
-                        onChange={handleChange}
-                      />
-                    </Col>
-					<Col
-                      style={{
-                        justifyContent: "right",
-                        alignContent: "right",
-                        textAlign: "right",
-                      }}
-                    >
-                      <h6 style={{}}>שעת סיום המשימה</h6>
-                      <Input
-                        placeholder="שעת סיום המשימה"
-                        type="datetime-local"
-                        name="date_end"
-                        value={cardata.date_end}
-                        onChange={handleChange}
-                      />
-                    </Col>
-					<Col
-                      style={{
-                        justifyContent: "right",
-                        alignContent: "right",
-                        textAlign: "right",
-                      }}
-                    >
-                      <h6 style={{}}>שעת הגעה ליחידת האם</h6>
-                      <Input
-                        placeholder="שעת הגעה ליחידת האם"
-                        type="datetime-local"
-                        name="date_return"
-                        value={cardata.date_return}
-                        onChange={handleChange}
-                      />
-                    </Col>
-                      </Row>
-					  <Row>
-					  <Col
-                      style={{
-                        justifyContent: "right",
-                        alignContent: "right",
-                        textAlign: "right",
-                      }}
-                    >
-                      <h6 style={{}}>חברי החוליה</h6>
-                      <Input
-                        placeholder="חברי החוליה"
-                        type="textarea"
-                        name="holi_group"
-                        value={cardata.holi_group}
-                        onChange={handleChange}
-                      />
-                    </Col>
-					<Col
-                      style={{
-                        justifyContent: "right",
-                        alignContent: "right",
-                        textAlign: "right",
-                      }}
-                    >
-                      <h6 style={{}}>הערות</h6>
-                      <Input
-                        placeholder="הערות"
-                        type="textarea"
-                        name="note"
-                        value={cardata.holi_group}
-                        onChange={handleChange}
-                      />
-                    </Col>
-
-					  </Row>
-                    </FormGroup>
-
-                  )}
+                {user.role == "3" && cardata.status == "אישור" && (
+                  <FormGroup>
+                    <Row>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>שעת הגעה ליעד</h6>
+                        <Input
+                          placeholder="שעת הגעה ליעד"
+                          type="datetime-local"
+                          name="date_arrival"
+                          value={cardata.date_arrival}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>שעת התחלת המשימה</h6>
+                        <Input
+                          placeholder="שעת התחלת המשימה"
+                          type="datetime-local"
+                          name="date_start"
+                          value={cardata.date_start}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>שעת סיום המשימה</h6>
+                        <Input
+                          placeholder="שעת סיום המשימה"
+                          type="datetime-local"
+                          name="date_end"
+                          value={cardata.date_end}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>שעת הגעה ליחידת האם</h6>
+                        <Input
+                          placeholder="שעת הגעה ליחידת האם"
+                          type="datetime-local"
+                          name="date_return"
+                          value={cardata.date_return}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>חברי החוליה</h6>
+                        <Input
+                          placeholder="חברי החוליה"
+                          type="textarea"
+                          name="holi_group"
+                          value={cardata.holi_group}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                      <Col
+                        style={{
+                          justifyContent: "right",
+                          alignContent: "right",
+                          textAlign: "right",
+                        }}
+                      >
+                        <h6 style={{}}>הערות</h6>
+                        <Input
+                          placeholder="הערות"
+                          type="textarea"
+                          name="note"
+                          value={cardata.holi_group}
+                          onChange={handleChange}
+                        />
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                )}
 
                 <div style={{ textAlign: "center", paddingTop: "20px" }}>
                   <button className="btn" onClick={clickSubmit}>

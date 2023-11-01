@@ -308,10 +308,12 @@ const SortingTable = ({ match }) => {
                         );
                       }
                       if (cell.column.id == "role") {
-                        if (cell.value == "0") return <td>הרשאת גוף מטכ"לי</td>;
+                        if (cell.value == "0")
+                          return <td>הרשאת מכלול טנ"א מטכ"לי</td>;
                         if (cell.value == "1") return <td>הרשאת פיקוד</td>;
                         if (cell.value == "2")
                           return <td>הרשאות תחום מסגרות טנ"א</td>;
+                        if (cell.value == "3") return <td>הרשאת גוף משלח</td>;
                       }
                       if (cell.column.id == "unit") {
                         if (

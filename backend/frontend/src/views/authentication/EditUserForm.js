@@ -145,7 +145,7 @@ const EditUserForm = ({ match }) => {
       lastname: data.lastname,
       role: data.role,
       validated: data.validated,
-      unit: data.unit,
+      unit: data.role === "0" || data.role === "2" ? "" : data.unit,
       //   personalnumber: data.personalnumber,
       //   gdodid: data.gdodid,
       //   hativaid: data.hativaid,
@@ -216,7 +216,7 @@ const EditUserForm = ({ match }) => {
                       onChange={handleChange}
                     >
                       <option value="">הרשאה</option>
-                      <option value="0">הרשאת גוף מטכ"לי</option>
+                      <option value="0">הרשאת מכלול טנ"א מטכ"לי</option>
                       <option value="2">הרשאות תחום מסגרות טנ"א</option>
                       <option value="3">הרשאת גוף משלח</option>
                       <option value="1">הרשאת פיקוד</option>

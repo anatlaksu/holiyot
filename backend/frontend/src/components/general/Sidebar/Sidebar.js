@@ -40,6 +40,8 @@ import Logo100_white from 'assets/img/team100_white.png';
 import SidebarAdmin from 'components/general/Sidebar/SidebarAdmin';
 import SidebarPikod from 'components/general/Sidebar/SidebarPikod';
 import SidebarTene from 'components/general/Sidebar/sidebarTene';
+import SidebarHoli from 'components/general/Sidebar/SidebarHoli';
+
 import { signout } from "auth/index";
 
 function Sidebar() {
@@ -75,7 +77,9 @@ function Sidebar() {
 
             user.role === "1" ? <SidebarPikod theme={color}/> : 
 
-            user.role === "2" ? <SidebarTene theme={color}/> : null
+            user.role === "2" ? <SidebarTene theme={color}/> : 
+
+            user.role === "3" ? <SidebarHoli theme={color}/> : null
           }
           <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
             {color == 'white' ? <img src={Logo100} style={{ height: "100px" }}></img>

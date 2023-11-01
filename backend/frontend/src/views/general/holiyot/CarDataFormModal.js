@@ -161,7 +161,7 @@ const CarDataFormModal = (props) => {
       ErrorReason.push(" לא הוזן כתובת מייל");
     }
 
-	if(user.role=="3" && cardata.status == 'אישור'){
+	if(user.role=="3" && cardata.status == 'אושר'){
 		if (!cardata.date_arrival) {
 			flag = false;
 			ErrorReason.push(" תאריך הגעה ליעד ריק ");
@@ -193,7 +193,8 @@ const CarDataFormModal = (props) => {
     if (flag == true) {
       if (
         (user.role == "2" && cardata.status == "חדש") ||
-        (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')
+        (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')||
+		(user.role=="3" && cardata.status == "אושר")
       ) {
         Update();
       } else {
@@ -250,6 +251,31 @@ const CarDataFormModal = (props) => {
         tempramam = { ...cardata, mail: mails, status: "נדחה" };
       }
     }
+	if (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א') {
+		if (
+		  document.getElementById("selmatcal_tne").options[
+			document.getElementById("selmatcal_tne").selectedIndex
+		  ].value == "true"
+		) {
+		  tempramam = {
+			...cardata,
+			mail: mails,
+			status: "אושר",
+			// date_kshirot_tne: date_kshirot_tne,
+			date_matcal_tne: date_matcal_tne,
+		  };
+		}
+		if (
+		  document.getElementById("selmatcal_tne").options[
+			document.getElementById("selmatcal_tne").selectedIndex
+		  ].value == "false"
+		) {
+		  tempramam = { ...cardata, mail: mails, status: "נדחה" };
+		}
+	  }  
+	  if(user.role=="3"){
+		tempramam = { ...cardata, mail: mails};
+	  }
 
     axios
       .post(`http://localhost:8000/api/report/update/${tempramamid}`, tempramam)
@@ -953,7 +979,7 @@ const CarDataFormModal = (props) => {
                     </FormGroup>
                   )}
 				  {user.role == "3" &&
-                  cardata.status == 'אישור' && (
+                  cardata.status == 'אושר' && (
                     <FormGroup>
                       <Row>
 					  <Col
@@ -968,7 +994,7 @@ const CarDataFormModal = (props) => {
                         placeholder="שעת הגעה ליעד"
                         type="datetime-local"
                         name="date_arrival"
-                        value={cardata.date_arrival}
+                        value={cardata.date_arrival?.slice(0, 16)}
                         onChange={handleChange}
                       />
                     </Col>
@@ -984,7 +1010,7 @@ const CarDataFormModal = (props) => {
                         placeholder="שעת התחלת המשימה"
                         type="datetime-local"
                         name="date_start"
-                        value={cardata.date_start}
+                        value={cardata.date_start?.slice(0, 16)}
                         onChange={handleChange}
                       />
                     </Col>
@@ -1000,7 +1026,7 @@ const CarDataFormModal = (props) => {
                         placeholder="שעת סיום המשימה"
                         type="datetime-local"
                         name="date_end"
-                        value={cardata.date_end}
+                        value={cardata.date_end?.slice(0, 16)}
                         onChange={handleChange}
                       />
                     </Col>
@@ -1016,7 +1042,7 @@ const CarDataFormModal = (props) => {
                         placeholder="שעת הגעה ליחידת האם"
                         type="datetime-local"
                         name="date_return"
-                        value={cardata.date_return}
+                        value={cardata.date_return?.slice(0, 16)}
                         onChange={handleChange}
                       />
                     </Col>
@@ -1050,7 +1076,7 @@ const CarDataFormModal = (props) => {
                         placeholder="הערות"
                         type="textarea"
                         name="note"
-                        value={cardata.holi_group}
+                        value={cardata.note}
                         onChange={handleChange}
                       />
                     </Col>

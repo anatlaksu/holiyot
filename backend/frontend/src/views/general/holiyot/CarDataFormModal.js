@@ -45,7 +45,7 @@ const CarDataFormModal = (props) => {
 
   const loadcardata = async () => {
     await axios
-      .get(`http://localhost:8000/api/reservevisits/${props.cardataid}`)
+      .get(`http://localhost:8000/api/report/${props.cardataid}`)
       .then(async (response) => {
         let tempcardata = response.data[0];
         setCarData(tempcardata);
@@ -62,7 +62,7 @@ const CarDataFormModal = (props) => {
 
   function getUnits() {
     axios
-      .get(`http://localhost:8000/api/units`)
+      .get(`http://localhost:8000/api/units/${user.unit}`)
       .then((res) => {
         setUnits(res.data);
       })
@@ -87,6 +87,11 @@ const CarDataFormModal = (props) => {
     //check for stuff isnt empty
     var flag = true;
     var ErrorReason = [];
+
+	if (cardata.body_requires == "" || cardata.body_requires === undefined) {
+		flag = false;
+		ErrorReason.push(" גוף דורש ריק");
+	  }  
 
     if (cardata.unit_requires == "" || cardata.unit_requires === undefined) {
       flag = false;
@@ -216,13 +221,14 @@ const CarDataFormModal = (props) => {
         date_matcal_tne = new Date().toISOString();
       }
       setmailsarray([{ mail: `${user.personalnumber}@outlook.com` }]);
-      setCarData({
+	  setCarData({
         number_class: 1,
         type_happend: "לא משבית",
         date_need: new Date().toISOString().split("T")[0],
         date_kshirot_tne: date_kshirot_tne,
         date_matcal_tne: date_matcal_tne,
       });
+
     }
   }, [props.isOpen]);
 
@@ -276,7 +282,7 @@ const CarDataFormModal = (props) => {
                     <Select
                       data={units}
                       handleChange2={handleChange2}
-                      name="unit"
+                      name="body_requires"
                       val={cardata.body_requires}
                     />
                   </Col>
@@ -741,7 +747,7 @@ const CarDataFormModal = (props) => {
                         <Input
                           placeholder='אישור מכלול טנ"א מטכ"לי'
                           type="select"
-                          name="kshirot_tne"
+                          name="matcal_tne"
                           value={cardata.matcal_tne}
                           onChange={handleChange}
                           id="selmatcal_tne"

@@ -49,6 +49,7 @@ const CarDataFormModal = (props) => {
       .then(async (response) => {
         let tempcardata = response.data[0];
         setCarData(tempcardata);
+		setmailsarray(tempcardata.mail);
       })
       .catch((error) => {
         console.log(error);
@@ -180,7 +181,7 @@ const CarDataFormModal = (props) => {
   };
 
   async function Create() {
-    let tempramam = { ...cardata };
+    let tempramam = { ...cardata,mail:mails };
     let result = await axios.post(
       `http://localhost:8000/api/report`,
       tempramam

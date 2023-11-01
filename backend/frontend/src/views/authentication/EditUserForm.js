@@ -34,6 +34,7 @@ const EditUserForm = ({ match }) => {
     personalnumber: "",
     role: "",
     unit: "",
+    holiya:"",
     //
     errortype: "",
     error: false,
@@ -146,6 +147,7 @@ const EditUserForm = ({ match }) => {
       role: data.role,
       validated: data.validated,
       unit: data.role === "0" || data.role === "2" ? "" : data.unit,
+      holiya: data.holiya,
       //   personalnumber: data.personalnumber,
       //   gdodid: data.gdodid,
       //   hativaid: data.hativaid,
@@ -259,14 +261,18 @@ const EditUserForm = ({ match }) => {
                       >
                         <Input
                           type="select"
-                          name="unit"
-                          value={data.unit}
+                          name="holiya"
+                          value={data.holiya}
                           onChange={handleChange}
                         >
-                          <option value="">הרשאה</option>
-                          {unitRequiredList.map((u) => (
-                            <option value={u.id}>{u.name}</option>
-                          ))}
+                        <option value={"בחר"}>{"בחר"}</option>
+                        <option value={'אגד טנ"א ארצי'}>
+                          {'אגד טנ"א ארצי'}
+                        </option>
+                        <option value={'חט"ל'}>{'חט"ל'}</option>
+                        <option value={'רפ"ט'}>{'רפ"ט'}</option>
+                        <option value={'מש"א'}>{'מש"א'}</option>
+                        <option value={"תעשייה"}>{"תעשייה"}</option>
                         </Input>
                       </FormGroup>
                     </>

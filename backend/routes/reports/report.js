@@ -6,6 +6,8 @@ const {
   read,
   update,
   remove,
+  findbyPikod,
+  findbyHoliya,
 } = require("../../controllers/reports/report.js");
 
 // find spec
@@ -16,5 +18,9 @@ router.post("/report", create);
 router.post("/report/update/:id", update);
 
 router.get("/report", find);
+
+router.get("/report/pikod/:id", findbyPikod);
+
+router.get("/report/holi/:id", findbyHoliya);
 
 module.exports = router;

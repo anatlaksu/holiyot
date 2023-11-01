@@ -86,7 +86,7 @@ const SortingTable = (props) => {
 
   async function CalculateDataArr() {
     await axios
-      .get(`http://localhost:8000/api/report`)
+      .get(`http://localhost:8000/api/report/pikod/${user.unit}`)
       .then((response) => {
         setData(response.data);
       })

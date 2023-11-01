@@ -30,12 +30,6 @@ const reportSchema = new mongoose.Schema(
     matcal_tne: { type: Boolean },
     pirot_matcal_tne: { type: String },
     date_matcal_tne: { type: Date },
-	date_arrival:{ type: Date },
-	date_start:{ type: Date },
-	date_end:{ type: Date },
-	date_return:{ type: Date },
-	holi_group:{ type: String },
-	note:{ type: String },
   },
   { timestamps: true }
 );

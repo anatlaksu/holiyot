@@ -8,6 +8,7 @@ const {
   remove,
   findbyPikod,
   findbyHoliya,
+  findbyHoliyaAprroved,
 } = require("../../controllers/reports/report.js");
 
 // find spec
@@ -22,5 +23,6 @@ router.get("/report", find);
 router.get("/report/pikod/:id", findbyPikod);
 
 router.get("/report/holi/:id", findbyHoliya);
+router.get("/report/holi/approved/:id", findbyHoliyaAprroved);
 
 module.exports = router;

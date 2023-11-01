@@ -68,5 +68,10 @@ exports.findbyHoliya = (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 };
 
+exports.findbyHoliyaAprroved = (req, res) => {
+  Report.find({ source_holi: req.params.id, status: "אושר" })
+    .then((report) => res.json(report))
+    .catch((err) => res.status(400).json("Error: " + err));
+};
 
 //

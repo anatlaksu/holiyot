@@ -63,8 +63,7 @@ const CarDataFormModal = (props) => {
 
   function getUnits() {
     axios
-      // .get(`http://localhost:8000/api/units/${user.unit}`)
-      .get(`http://localhost:8000/api/units/`)
+      .get(`http://localhost:8000/api/units/${user.unit}`)
       .then((res) => {
         setUnits(res.data);
       })
@@ -172,11 +171,27 @@ const CarDataFormModal = (props) => {
     //     ErrorReason.push(' אישור תחום כשירות מסגרות הטנ"א ריק ');
     //   }
 
+    // else if(user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א'){
+    // 	if(document.getElementById("selmatcal_tne").options[
+    // 		document.getElementById("selmatcal_tne").selectedIndex
+    // 	  ].value == true){
+    // 		setCarData({ ...cardata,status:'אושר' });
+    // 	}else if(document.getElementById("selmatcal_tne").options[
+    // 		document.getElementById("selmatcal_tne").selectedIndex
+    // 	  ].value == false){
+    // 		setCarData({ ...cardata,status:'נדחה' });
+    // 	}
+    // }
+
     if (flag == true) {
-		if((user.role == "2" && cardata.status == "חדש") || (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')){
-			Update();
-		}
-      Create();
+      if (
+        (user.role == "2" && cardata.status == "חדש") ||
+        (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')
+      ) {
+        Update();
+      } else {
+        Create();
+      }
     } else {
       ErrorReason.forEach((e) => {
         toast.error(e);
@@ -185,8 +200,7 @@ const CarDataFormModal = (props) => {
   };
 
   async function Create() {
-
-    let tempramam = { ...cardata,mail:mails,status:"חדש" };
+    let tempramam = { ...cardata, mail: mails, status: "חדש" };
     let result = await axios.post(
       `http://localhost:8000/api/report`,
       tempramam
@@ -196,34 +210,50 @@ const CarDataFormModal = (props) => {
   }
 
   async function Update() {
-  	//update ramam
-  	var tempramamid = props.cardataid;
-	  let tempramam;
-	  if(user.role == "2" && cardata.status == "חדש"){
-		if(cardata.kshirot_tne = true){
-			tempramam = { ...cardata,mail:mails,status:'ממתין לאישור מכלול טנ"א' };
-		}else if(cardata.kshirot_tne = false){
-			 tempramam = { ...cardata,mail:mails,status:'נדחה' };
-		}else{
-			 tempramam = { ...cardata,mail:mails};
-		}
-	}else if(user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א'){
-		if(cardata.matcal_tne = true){
-			 tempramam = { ...cardata,mail:mails,status:'אושר' };
-		}else if(cardata.matcal_tne = false){
-			tempramam = { ...cardata,mail:mails,status:'נדחה' };
-		}else{
-			tempramam = { ...cardata,mail:mails};
-		}
-	}else{
-		tempramam = { ...cardata,mail:mails};
-	}
-  	let result = await axios.put(
-  		`http://localhost:8000/api/report/${tempramamid}`,
-  		tempramam
-  	);
-  	toast.success(`איש מילואים עודכן בהצלחה`);
-  	props.ToggleForModal();
+    //update ramam
+    var tempramamid = props.cardataid;
+    let tempramam;
+    let date_kshirot_tne = "";
+    let date_matcal_tne = "";
+    if (user.role == "2" && cardata.status == "חדש") {
+      date_kshirot_tne = new Date().toISOString();
+    }
+    if (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א') {
+      date_matcal_tne = new Date().toISOString();
+    }
+    if (user.role == "2" && cardata.status == "חדש") {
+      if (
+        document.getElementById("selkshirot_tne").options[
+          document.getElementById("selkshirot_tne").selectedIndex
+        ].value == "true"
+      ) {
+        tempramam = {
+          ...cardata,
+          mail: mails,
+          status: 'ממתין לאישור מכלול טנ"א',
+          date_kshirot_tne: date_kshirot_tne,
+          // date_matcal_tne: date_matcal_tne,
+        };
+      }
+      if (
+        document.getElementById("selkshirot_tne").options[
+          document.getElementById("selkshirot_tne").selectedIndex
+        ].value == "false"
+      ) {
+        tempramam = { ...cardata, mail: mails, status: "נדחה" };
+      }
+    }
+
+    axios
+      .post(`http://localhost:8000/api/report/update/${tempramamid}`, tempramam)
+      .then((response) => {
+        window.location.reload(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    toast.success(`בקשה לחוליה עודכן בהצלחה`);
+    props.ToggleForModal();
   }
 
   function init() {
@@ -238,21 +268,11 @@ const CarDataFormModal = (props) => {
 
       getUnits();
     } else {
-      let date_kshirot_tne = "";
-      let date_matcal_tne = "";
-      if (user.role == "2" && cardata.status == "חדש") {
-        date_kshirot_tne = new Date().toISOString();
-      }
-      if (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א') {
-        date_matcal_tne = new Date().toISOString();
-      }
       setmailsarray([{ mail: `${user.personalnumber}@outlook.com` }]);
       setCarData({
         number_class: 1,
         type_happend: "לא משבית",
         date_need: new Date().toISOString().split("T")[0],
-        date_kshirot_tne: date_kshirot_tne,
-        date_matcal_tne: date_matcal_tne,
         body_requires: user.unit,
       });
     }

@@ -21,29 +21,29 @@ const db = "mongodb://127.0.0.1/holiyot";
 
 // Connect to Mongo with Mongoose
 mongoose
-	.connect(db, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-		useCreateIndex: true,
-	})
-	.then(() => console.log("Mongo connected"))
-	.catch((err) => console.log(err));
+  .connect(db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .then(() => console.log("Mongo connected"))
+  .catch((err) => console.log(err));
 
 const mongo = mongoose.connection;
 
 const updateCollections = async () => {
-	const collection = mongo.collection("reservevisits");
-	await collection.updateMany({}, { $set: { todayPresent: false } });
+  const collection = mongo.collection("reservevisits");
+  await collection.updateMany({}, { $set: { todayPresent: false } });
 };
 
 new CronJob(
-	"0 0 * * *",
-	async () => {
-		await updateCollections();
-	},
-	null,
-	true,
-	"Asia/Jerusalem"
+  "0 0 * * *",
+  async () => {
+    await updateCollections();
+  },
+  null,
+  true,
+  "Asia/Jerusalem"
 );
 
 //user routes
@@ -67,17 +67,16 @@ app.use("/api", pikodRoutes);
 const reportRoutes = require("./routes/reports/report");
 app.use("/api", reportRoutes);
 
-
 if (process.env.NODE_ENV === "production") {
-	//set static folder
-	app.use(express.static("frontend/build"));
-	app.get("*", (req, res) => {
-		res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-	});
+  //set static folder
+  app.use(express.static("frontend/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
 }
 
 //listen
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
-	console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

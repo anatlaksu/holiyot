@@ -132,7 +132,7 @@ export default function SignUpForm() {
       personalnumber: data.personalnumber,
       unit: data.unit,
 
-      validated: data.role === "0" ? false : true,
+      validated: data.role === "3" ? false : true,
 
       site_permission: data.site_permission,
     };
@@ -141,7 +141,7 @@ export default function SignUpForm() {
       .post(`http://localhost:8000/api/signup`, user)
       .then((res) => {
         setData({ ...data, loading: false, error: false, successmsg: true });
-        if (data.role === "0") {
+        if (data.role === "3") {
           toast.success(
             `הרשמתך נקלטה בהצלחה, ותאושר עד 72 שעות ע"י מנהל המערכת`
           );

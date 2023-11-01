@@ -189,11 +189,16 @@ const CarDataFormModal = (props) => {
 	  
 	}
 
+
     if (flag == true) {
-		if((user.role == "2" && cardata.status == 'חדש') || (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')){
-			Update();
-		}
-      Create();
+      if (
+        (user.role == "2" && cardata.status == "חדש") ||
+        (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')
+      ) {
+        Update();
+      } else {
+        Create();
+      }
     } else {
       ErrorReason.forEach((e) => {
         toast.error(e);
@@ -202,7 +207,7 @@ const CarDataFormModal = (props) => {
   };
 
   async function Create() {
-    let tempramam = { ...cardata,mail:mails,status:"חדש"};
+    let tempramam = { ...cardata, mail: mails, status: "חדש" };
     let result = await axios.post(
       `http://localhost:8000/api/report`,
       tempramam
@@ -212,29 +217,50 @@ const CarDataFormModal = (props) => {
   }
 
   async function Update() {
-  	//update ramam
-  	var tempramamid = props.cardataid;
-	let tempramam;
-	if(user.role == "2" && cardata.status == "חדש"){
-		if (
-			document.getElementById("selkshirot_tne").options[
-			  document.getElementById("selkshirot_tne").selectedIndex
-			].value == "true"
-		){
-			tempramam={...cardata,mail:mails,status:'ממתין לאישור מכלול טנ"א'}
-		}
-		if(document.getElementById("selkshirot_tne").options[
-			document.getElementById("selkshirot_tne").selectedIndex
-		  ].value == "false"){
-			tempramam={...cardata,mail:mails,status:'נדחה'}
-		}
-	}
-  	let result = await axios.put(
-  		`http://localhost:8000/api/report/${tempramamid}`,
-  		tempramam
-  	);
-  	toast.success(`בקשה לחוליה עודכן בהצלחה`);
-  	props.ToggleForModal();
+    //update ramam
+    var tempramamid = props.cardataid;
+    let tempramam;
+    let date_kshirot_tne = "";
+    let date_matcal_tne = "";
+    if (user.role == "2" && cardata.status == "חדש") {
+      date_kshirot_tne = new Date().toISOString();
+    }
+    if (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א') {
+      date_matcal_tne = new Date().toISOString();
+    }
+    if (user.role == "2" && cardata.status == "חדש") {
+      if (
+        document.getElementById("selkshirot_tne").options[
+          document.getElementById("selkshirot_tne").selectedIndex
+        ].value == "true"
+      ) {
+        tempramam = {
+          ...cardata,
+          mail: mails,
+          status: 'ממתין לאישור מכלול טנ"א',
+          date_kshirot_tne: date_kshirot_tne,
+          // date_matcal_tne: date_matcal_tne,
+        };
+      }
+      if (
+        document.getElementById("selkshirot_tne").options[
+          document.getElementById("selkshirot_tne").selectedIndex
+        ].value == "false"
+      ) {
+        tempramam = { ...cardata, mail: mails, status: "נדחה" };
+      }
+    }
+
+    axios
+      .post(`http://localhost:8000/api/report/update/${tempramamid}`, tempramam)
+      .then((response) => {
+        window.location.reload(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    toast.success(`בקשה לחוליה עודכן בהצלחה`);
+    props.ToggleForModal();
   }
 
   function init() {
@@ -249,21 +275,11 @@ const CarDataFormModal = (props) => {
 
       getUnits();
     } else {
-      let date_kshirot_tne = "";
-      let date_matcal_tne = "";
-      if (user.role == "2" && cardata.status == "חדש") {
-        date_kshirot_tne = new Date().toISOString();
-      }
-      if (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א') {
-        date_matcal_tne = new Date().toISOString();
-      }
       setmailsarray([{ mail: `${user.personalnumber}@outlook.com` }]);
       setCarData({
         number_class: 1,
         type_happend: "לא משבית",
         date_need: new Date().toISOString().split("T")[0],
-        date_kshirot_tne: date_kshirot_tne,
-        date_matcal_tne: date_matcal_tne,
         body_requires: user.unit,
       });
     }
@@ -353,7 +369,8 @@ const CarDataFormModal = (props) => {
                         handleChange2={handleChange2}
                         name="body_requires"
                         val={cardata.body_requires}
-						isDisabled={getIfDisabled()}
+            						isDisabled={getIfDisabled()}
+
                       />
                     </Col>
                     <Col
@@ -570,6 +587,7 @@ const CarDataFormModal = (props) => {
                         textAlign: "right",
                       }}
                     >
+
                       <h6 style={{}}>מועד רצוי להוצאת החוליה</h6>
                       <Input
                         placeholder="מועד רצוי להוצאת החוליה"
@@ -601,6 +619,7 @@ const CarDataFormModal = (props) => {
                         onChange={handleChange}
 						disabled={getIfDisabled()}     
 	                 />
+
                     </Col>
                     <Col
                       style={{
@@ -617,6 +636,7 @@ const CarDataFormModal = (props) => {
                         value={cardata.numbercontact}
                         onChange={handleChange}
 						disabled={getIfDisabled()}
+
                       />
                     </Col>
                   </Row>
@@ -666,6 +686,7 @@ const CarDataFormModal = (props) => {
 ):(
 	<>
 	                {mails.length == 0 ? (
+
                   <Row>
                     <Col style={{ display: "flex", textAlign: "right" }}>
                       <Button
@@ -677,6 +698,7 @@ const CarDataFormModal = (props) => {
                             { id: generate() },
                           ]);
                         }}
+                        disabled={user.role === "3"}
                       >
                         הוסף מייל
                       </Button>
@@ -706,6 +728,7 @@ const CarDataFormModal = (props) => {
                                     { id: generate() },
                                   ]);
                                 }}
+                                disabled={user.role === "3"}
                               >
                                 הוסף מייל
                               </Button>
@@ -736,6 +759,7 @@ const CarDataFormModal = (props) => {
                                   placeholder="מייל"
                                   value={p.mail}
                                   type="email"
+                                  disabled={user.role === "3"}
                                 />
                               </div>
                             </Col>
@@ -748,6 +772,7 @@ const CarDataFormModal = (props) => {
                               currentSpec.filter((x) => x.id !== p.id)
                             );
                           }}
+                          disabled={user.role === "3"}
                         >
                           <img src={deletepic} height="20px"></img>
                         </Button>
@@ -1032,6 +1057,7 @@ const CarDataFormModal = (props) => {
 
 					  </Row>
                     </FormGroup>
+
                   )}
 
                 <div style={{ textAlign: "center", paddingTop: "20px" }}>

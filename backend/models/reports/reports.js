@@ -23,7 +23,7 @@ const reportSchema = new mongoose.Schema(
     pikod: { type: Boolean },
     road: { type: Boolean },
     date_approv: { type: String },
-    status: { type: String, require: true, default: "חדש" },
+    status: { type: String, require: true },
     kshirot_tne: { type: Boolean },
     pirot_kshirot_tne: { type: String },
     date_kshirot_tne: { type: Date },

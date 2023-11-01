@@ -173,6 +173,9 @@ const CarDataFormModal = (props) => {
     //   }
 
     if (flag == true) {
+		if((user.role == "2" && cardata.status == "חדש") || (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')){
+			Update();
+		}
       Create();
     } else {
       ErrorReason.forEach((e) => {
@@ -182,7 +185,8 @@ const CarDataFormModal = (props) => {
   };
 
   async function Create() {
-    let tempramam = { ...cardata, mail: mails };
+
+    let tempramam = { ...cardata,mail:mails,status:"חדש" };
     let result = await axios.post(
       `http://localhost:8000/api/report`,
       tempramam
@@ -191,17 +195,36 @@ const CarDataFormModal = (props) => {
     props.ToggleForModal();
   }
 
-  // async function Update() {
-  // 	//update ramam
-  // 	var tempramamid = props.cardataid;
-  // 	let tempramam = { ...cardata };
-  // 	let result = await axios.put(
-  // 		`http://localhost:8000/api/reservevisits/${tempramamid}`,
-  // 		tempramam
-  // 	);
-  // 	toast.success(`איש מילואים עודכן בהצלחה`);
-  // 	props.ToggleForModal();
-  // }
+  async function Update() {
+  	//update ramam
+  	var tempramamid = props.cardataid;
+	  let tempramam;
+	  if(user.role == "2" && cardata.status == "חדש"){
+		if(cardata.kshirot_tne = true){
+			tempramam = { ...cardata,mail:mails,status:'ממתין לאישור מכלול טנ"א' };
+		}else if(cardata.kshirot_tne = false){
+			 tempramam = { ...cardata,mail:mails,status:'נדחה' };
+		}else{
+			 tempramam = { ...cardata,mail:mails};
+		}
+	}else if(user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א'){
+		if(cardata.matcal_tne = true){
+			 tempramam = { ...cardata,mail:mails,status:'אושר' };
+		}else if(cardata.matcal_tne = false){
+			tempramam = { ...cardata,mail:mails,status:'נדחה' };
+		}else{
+			tempramam = { ...cardata,mail:mails};
+		}
+	}else{
+		tempramam = { ...cardata,mail:mails};
+	}
+  	let result = await axios.put(
+  		`http://localhost:8000/api/report/${tempramamid}`,
+  		tempramam
+  	);
+  	toast.success(`איש מילואים עודכן בהצלחה`);
+  	props.ToggleForModal();
+  }
 
   function init() {
     if (props.cardataid != undefined) {

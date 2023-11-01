@@ -161,28 +161,33 @@ const CarDataFormModal = (props) => {
       ErrorReason.push(" לא הוזן כתובת מייל");
     }
 
-    // if (user.role == "2" && cardata.status == "חדש") {
-    //   if (
-    //     document.getElementById("selkshirot_tne").options[
-    //       document.getElementById("selkshirot_tne").selectedIndex
-    //     ].value == "בחר"
-    //   ) {
-    //     flag = false;
-    //     ErrorReason.push(' אישור תחום כשירות מסגרות הטנ"א ריק ');
-    //   }
-
-	// else if(user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א'){
-	// 	if(document.getElementById("selmatcal_tne").options[
-	// 		document.getElementById("selmatcal_tne").selectedIndex
-	// 	  ].value == true){
-	// 		setCarData({ ...cardata,status:'אושר' });
-	// 	}else if(document.getElementById("selmatcal_tne").options[
-	// 		document.getElementById("selmatcal_tne").selectedIndex
-	// 	  ].value == false){
-	// 		setCarData({ ...cardata,status:'נדחה' });
-	// 	}
-	// }
-
+	if(user.role=="3" && cardata.status == 'אישור'){
+		if (!cardata.date_arrival) {
+			flag = false;
+			ErrorReason.push(" תאריך הגעה ליעד ריק ");
+		  }
+		  if (!cardata.date_start) {
+			flag = false;
+			ErrorReason.push(" תאריך התחלת המשימה ריק ");
+		  }
+		  if (!cardata.date_end) {
+			flag = false;
+			ErrorReason.push(" תאריך סיום המשימה ריק ");
+		  }
+		  if (!cardata.date_return) {
+			flag = false;
+			ErrorReason.push(" תאריך הגעה ליחידת האם ריק ");
+		  }
+		  if (cardata.holi_group == "" || cardata.holi_group === undefined) {
+			flag = false;
+			ErrorReason.push(" חברי החוליה ריק ");
+		  }
+		  if (cardata.note == "" || cardata.note === undefined) {
+			flag = false;
+			ErrorReason.push("הערות ריק ");
+		  }
+	  
+	}
 
     if (flag == true) {
 		if((user.role == "2" && cardata.status == 'חדש') || (user.role == "0" && cardata.status == 'ממתין לאישור מכלול טנ"א')){
@@ -922,6 +927,113 @@ const CarDataFormModal = (props) => {
                       </Row>
                     </FormGroup>
                   )}
+				  {user.role == "3" &&
+                  cardata.status == 'אישור' && (
+                    <FormGroup>
+                      <Row>
+					  <Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>שעת הגעה ליעד</h6>
+                      <Input
+                        placeholder="שעת הגעה ליעד"
+                        type="datetime-local"
+                        name="date_arrival"
+                        value={cardata.date_arrival}
+                        onChange={handleChange}
+                      />
+                    </Col>
+					<Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>שעת התחלת המשימה</h6>
+                      <Input
+                        placeholder="שעת התחלת המשימה"
+                        type="datetime-local"
+                        name="date_start"
+                        value={cardata.date_start}
+                        onChange={handleChange}
+                      />
+                    </Col>
+					<Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>שעת סיום המשימה</h6>
+                      <Input
+                        placeholder="שעת סיום המשימה"
+                        type="datetime-local"
+                        name="date_end"
+                        value={cardata.date_end}
+                        onChange={handleChange}
+                      />
+                    </Col>
+					<Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>שעת הגעה ליחידת האם</h6>
+                      <Input
+                        placeholder="שעת הגעה ליחידת האם"
+                        type="datetime-local"
+                        name="date_return"
+                        value={cardata.date_return}
+                        onChange={handleChange}
+                      />
+                    </Col>
+                      </Row>
+					  <Row>
+					  <Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>חברי החוליה</h6>
+                      <Input
+                        placeholder="חברי החוליה"
+                        type="textarea"
+                        name="holi_group"
+                        value={cardata.holi_group}
+                        onChange={handleChange}
+                      />
+                    </Col>
+					<Col
+                      style={{
+                        justifyContent: "right",
+                        alignContent: "right",
+                        textAlign: "right",
+                      }}
+                    >
+                      <h6 style={{}}>הערות</h6>
+                      <Input
+                        placeholder="הערות"
+                        type="textarea"
+                        name="note"
+                        value={cardata.holi_group}
+                        onChange={handleChange}
+                      />
+                    </Col>
+
+					  </Row>
+                    </FormGroup>
+                  )}
+
                 <div style={{ textAlign: "center", paddingTop: "20px" }}>
                   <button className="btn" onClick={clickSubmit}>
                     שלח

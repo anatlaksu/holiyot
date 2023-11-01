@@ -44,6 +44,8 @@ const CarDataFormModal = (props) => {
     { mail: `${user.personalnumber}@outlook.com` },
   ]);
 
+  const [email, setEmail] = useState([]);// לתוך email להכניס את המיילים של האנשים ששמרו פרוייקט זה כמועדף
+
   const loadcardata = async () => {
     await axios
       .get(`http://localhost:8000/api/report/${props.cardataid}`)
@@ -197,6 +199,7 @@ const CarDataFormModal = (props) => {
         (user.role == "3" && cardata.status == "אושר")
       ) {
         Update();
+        sendEmail();
       } else {
         Create();
       }
@@ -312,7 +315,7 @@ const CarDataFormModal = (props) => {
     axios
       .post(`http://localhost:8000/api/report/update/${tempramamid}`, tempramam)
       .then((response) => {
-        window.location.reload(false);
+        // window.location.reload(false);
       })
       .catch((error) => {
         console.log(error);
@@ -320,6 +323,26 @@ const CarDataFormModal = (props) => {
     toast.success(`בקשה לחוליה עודכן בהצלחה`);
     props.ToggleForModal();
   }
+
+  const sendEmail = async () => {
+
+    const ma= mails.map((mail)=>mail.mail);
+    console.log(ma);
+    setEmail(ma);
+
+    console.log(email);
+
+    const datae = {
+      email,
+    };
+
+    const response = await axios.post(
+      "http://localhost:8000/api/sendemail",
+      email
+    );
+    console.log(response.data);
+  };
+
 
   function init() {
     if (props.cardataid != undefined) {

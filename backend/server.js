@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+const nodemailer = require('nodemailer');
+
 //app config
 const app = express();
 
@@ -66,6 +68,34 @@ app.use("/api", pikodRoutes);
 //general routes
 const reportRoutes = require("./routes/reports/report");
 app.use("/api", reportRoutes);
+
+app.post("/api/sendemail", async (req, res) => {
+ 
+  const { email } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: 'Outlook',
+    auth: {
+      user: 'anatlakus@outlook.com',
+      pass: 'anat324160746',
+    },
+  });
+  
+  const mailOptions = {
+    from: 'anatlakus@outlook.com',
+    to: email,
+    subject: 'עדכון לבקשת חוליה',
+    text: 'בקשה לחוליה אושרה',
+  };
+  
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });});
+
 
 if (process.env.NODE_ENV === "production") {
   //set static folder

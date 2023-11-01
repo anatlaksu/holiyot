@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, default: "1" },
     validated: { type: Boolean, default: false },
     unit: { type: String },
+    holiya:{ type: String },
     //
     //
     site_permission: { type: String, default: "צפייה ועריכה" },

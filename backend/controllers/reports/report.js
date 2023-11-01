@@ -56,4 +56,17 @@ exports.remove = (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 };
 
+exports.findbyPikod = (req, res) => {
+  Report.find({ body_requires: req.params.id })
+    .then((report) => res.json(report))
+    .catch((err) => res.status(400).json("Error: " + err));
+};
+
+exports.findbyHoliya = (req, res) => {
+  Report.find({ source_holi: req.params.id })
+    .then((report) => res.json(report))
+    .catch((err) => res.status(400).json("Error: " + err));
+};
+
+
 //

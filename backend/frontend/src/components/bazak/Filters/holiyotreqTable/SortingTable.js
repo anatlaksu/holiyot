@@ -84,6 +84,16 @@ const SortingTable = (props) => {
   }
 
   async function CalculateDataArr() {
+    if(user.role==="3"){
+      await axios
+      .get(`http://localhost:8000/api/report/holi/${user.holiya}`)
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }else{
     await axios
       .get(`http://localhost:8000/api/report`)
       .then((response) => {
@@ -92,6 +102,7 @@ const SortingTable = (props) => {
       .catch((error) => {
         console.log(error);
       });
+    }
   }
 
   const getUnit = async () => {
